@@ -27,7 +27,6 @@ PowerAlert Nepal solves this by providing a single, searchable, area-based web p
 
 ## Features
 
-- **User Authentication** — Signup and login with localStorage-based auth, protected routes
 - **Area-Based Search** — Search power cuts by ward or area, dynamic card rendering
 - **Color-Coded Outage Cards** — Scheduled, Active, and Restored status at a glance
 - **Maintenance Calendar** — Filter by status, sort by date
