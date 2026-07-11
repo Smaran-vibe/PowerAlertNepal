@@ -7,6 +7,11 @@ import Alerts from './pages/Alerts'
 import Calendar from './pages/Calendar'
 import Report from './pages/Report'
 import About from './pages/About'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import ForgotPassword from './pages/ForgotPassword'
+import ProtectedRoute from './components/ProtectedRoute'
+import { useAuth } from './context/AuthContext'
 
 function Layout({ children }) {
   return (
@@ -18,14 +23,26 @@ function Layout({ children }) {
   )
 }
 
+function AuthRedirect({ children }) {
+  const { isAuthenticated } = useAuth()
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout><Home /></Layout>} />
-      <Route path="/alerts" element={<Layout><Alerts /></Layout>} />
-      <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
-      <Route path="/report" element={<Layout><Report /></Layout>} />
-      <Route path="/about" element={<Layout><About /></Layout>} />
+      <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
+      <Route path="/register" element={<AuthRedirect><Signup /></AuthRedirect>} />
+      <Route path="/signup" element={<Navigate to="/register" replace />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/" element={<ProtectedRoute><Layout><Home /></Layout></ProtectedRoute>} />
+      <Route path="/alerts" element={<ProtectedRoute><Layout><Alerts /></Layout></ProtectedRoute>} />
+      <Route path="/calendar" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
+      <Route path="/report" element={<ProtectedRoute><Layout><Report /></Layout></ProtectedRoute>} />
+      <Route path="/about" element={<ProtectedRoute><Layout><About /></Layout></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

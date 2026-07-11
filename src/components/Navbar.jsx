@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import ElectricPoleIcon from './ElectricPoleIcon'
+import { useAuth } from '../context/AuthContext'
 
 function MenuIcon() {
   return (
@@ -28,10 +29,18 @@ const navLinks = [
 
 export default function Navbar() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { session, logout } = useAuth()
 
   function isActive(path) {
     return location.pathname === path
+  }
+
+  function handleLogout() {
+    logout()
+    setMenuOpen(false)
+    navigate('/login')
   }
 
   return (
@@ -57,6 +66,18 @@ export default function Navbar() {
           ))}
         </ul>
 
+        <div className="hidden md:flex items-center gap-3">
+          {session && (
+            <div className="hidden lg:flex items-center gap-3 rounded-full bg-brand-lavender px-4 py-2 text-sm text-gray-700">
+              <span className="font-semibold text-brand-purple">{session.name}</span>
+              <span className="text-gray-400">|</span>
+              <button type="button" onClick={handleLogout} className="font-semibold text-gray-700 hover:text-brand-purple">
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
         <button
           className="md:hidden text-gray-600"
           onClick={() => setMenuOpen(prev => !prev)}
@@ -73,10 +94,19 @@ export default function Navbar() {
               to={link.to}
               onClick={() => setMenuOpen(false)}
               className={`text-sm font-medium transition-colors hover:text-brand-purple ${isActive(link.to) ? 'text-brand-purple font-semibold' : 'text-gray-600'}`}
-            >
-              {link.label}
-            </Link>
+              >
+                {link.label}
+              </Link>
           ))}
+          {session && (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-full bg-brand-purple px-4 py-2 text-sm font-semibold text-white"
+            >
+              Logout
+            </button>
+          )}
         </div>
       )}
     </nav>
