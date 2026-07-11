@@ -6,11 +6,11 @@ A modern, responsive web application for real-time power outage alerts, maintena
 
 ## Preview
 
+![](./assets/preview.png)
 
-(./assets/preview.png)
-(./assets/preview2.png)
-(./assets/preview3.png)
+![](./assets/preview2.png)
 
+![](./assets/preview3.png)
 
 ## Problem Statement
 
