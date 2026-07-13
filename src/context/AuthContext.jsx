@@ -57,7 +57,6 @@ export function AuthProvider({ children }) {
 
     const nextUsers = [...readUsers(), nextUser]
     persistUsers(nextUsers)
-    persistSession({ id: nextUser.id, name: nextUser.name, email: nextUser.email })
     return { ok: true }
   }
 
