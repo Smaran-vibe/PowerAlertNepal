@@ -44,21 +44,21 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-0">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <ElectricPoleIcon className="w-5 h-5 text-brand-yellow" />
-          <span className="font-display text-xl font-bold text-brand-purple tracking-tight">
-            PowerAlert <span className="text-gray-800">Nepal</span>
+          <ElectricPoleIcon className="h-5 w-5 text-brand-purple" />
+          <span className="text-[1.05rem] font-semibold tracking-tight text-slate-900">
+            PowerAlert <span className="text-brand-purple">Nepal</span>
           </span>
         </Link>
 
-        <ul className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+        <ul className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
           {navLinks.map(link => (
             <li key={link.to}>
               <Link
                 to={link.to}
-                className={`transition-colors hover:text-brand-purple ${isActive(link.to) ? 'text-brand-purple font-semibold' : ''}`}
+                className={`relative py-1 transition-colors hover:text-brand-purple ${isActive(link.to) ? 'font-semibold text-brand-purple' : ''}`}
               >
                 {link.label}
               </Link>
@@ -66,12 +66,12 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden items-center gap-3 md:flex">
           {session && (
-            <div className="hidden lg:flex items-center gap-3 rounded-full bg-brand-lavender px-4 py-2 text-sm text-gray-700">
-              <span className="font-semibold text-brand-purple">{session.name}</span>
-              <span className="text-gray-400">|</span>
-              <button type="button" onClick={handleLogout} className="font-semibold text-gray-700 hover:text-brand-purple">
+            <div className="hidden items-center gap-3 border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm text-slate-700 lg:flex">
+              <span className="font-medium text-slate-900">{session.name}</span>
+              <span className="text-slate-300">|</span>
+              <button type="button" onClick={handleLogout} className="font-medium text-brand-purple hover:text-brand-purple-dark">
                 Logout
               </button>
             </div>
@@ -79,7 +79,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="md:hidden text-gray-600"
+          className="md:hidden text-slate-700"
           onClick={() => setMenuOpen(prev => !prev)}
         >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -87,22 +87,22 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-2 border-t border-slate-200 bg-white px-4 py-4 md:hidden">
           {navLinks.map(link => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMenuOpen(false)}
-              className={`text-sm font-medium transition-colors hover:text-brand-purple ${isActive(link.to) ? 'text-brand-purple font-semibold' : 'text-gray-600'}`}
-              >
-                {link.label}
-              </Link>
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-brand-lavender hover:text-brand-purple ${isActive(link.to) ? 'bg-brand-purple-light text-brand-purple' : 'text-slate-700'}`}
+            >
+              {link.label}
+            </Link>
           ))}
           {session && (
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-full bg-brand-purple px-4 py-2 text-sm font-semibold text-white"
+              className="mt-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
             >
               Logout
             </button>
