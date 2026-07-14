@@ -122,4 +122,5 @@ export const liveStatusData = [
     restoration: "2:00 PM today",
     message: "NEA crew currently on site.",
   },
+
 ]
