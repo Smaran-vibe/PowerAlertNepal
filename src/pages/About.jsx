@@ -62,13 +62,13 @@ export default function About() {
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10 text-center">
-            <h1 className="font-display text-3xl font-bold text-gray-900 mb-2">About PowerAlert Nepal</h1>
+            <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">About PowerAlert Nepal</h1>
             <p className="text-gray-500 text-sm">Why this platform was built</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {aboutCards.map(card => (
               <div key={card.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h3 className="font-display font-bold text-gray-800 mb-3 text-base">{card.title}</h3>
+                <h3 className="font-sans font-bold text-gray-800 mb-3 text-base">{card.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{card.body}</p>
               </div>
             ))}
@@ -80,7 +80,7 @@ export default function About() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10 text-center">
-            <h2 className="font-display text-3xl font-bold text-gray-900 mb-2">Contact Us</h2>
+            <h2 className="font-sans text-3xl font-bold text-gray-900 mb-2">Contact Us</h2>
             <p className="text-gray-500 text-sm">Questions, feedback, or partnership inquiries</p>
           </div>
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -10,7 +10,6 @@ import About from './pages/About'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
-import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
 function Layout({ children }) {
@@ -25,10 +24,18 @@ function Layout({ children }) {
 
 function AuthRedirect({ children }) {
   const { isAuthenticated } = useAuth()
+  const location = useLocation()
+  const from = location.state?.from || '/'
+
   if (isAuthenticated) {
-    return <Navigate to="/" replace />
+    return <Navigate to={from} replace />
   }
   return children
+}
+
+function SignupRedirect() {
+  const location = useLocation()
+  return <Navigate to="/register" replace state={location.state} />
 }
 
 export default function App() {
@@ -36,13 +43,13 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
       <Route path="/register" element={<AuthRedirect><Signup /></AuthRedirect>} />
-      <Route path="/signup" element={<Navigate to="/register" replace />} />
+      <Route path="/signup" element={<SignupRedirect />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/" element={<ProtectedRoute><Layout><Home /></Layout></ProtectedRoute>} />
-      <Route path="/alerts" element={<ProtectedRoute><Layout><Alerts /></Layout></ProtectedRoute>} />
-      <Route path="/calendar" element={<ProtectedRoute><Layout><Calendar /></Layout></ProtectedRoute>} />
-      <Route path="/report" element={<ProtectedRoute><Layout><Report /></Layout></ProtectedRoute>} />
-      <Route path="/about" element={<ProtectedRoute><Layout><About /></Layout></ProtectedRoute>} />
+      <Route path="/" element={<Layout><Home /></Layout>} />
+      <Route path="/alerts" element={<Layout><Alerts /></Layout>} />
+      <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
+      <Route path="/report" element={<Layout><Report /></Layout>} />
+      <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

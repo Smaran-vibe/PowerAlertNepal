@@ -18,7 +18,7 @@ export default function Alerts() {
     <div className="min-h-screen bg-brand-lavender py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-10">
-          <h1 className="font-display text-3xl font-bold text-gray-900 mb-2">Power Cut Alerts</h1>
+          <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">Power Cut Alerts</h1>
           <p className="text-gray-500 text-sm">Search and filter all active and upcoming outages across Nepal</p>
         </div>
 

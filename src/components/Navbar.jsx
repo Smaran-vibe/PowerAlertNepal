@@ -68,13 +68,21 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {session && (
-            <div className="hidden items-center gap-3 border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm text-slate-700 lg:flex">
+            <div className="flex items-center gap-3 border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm text-slate-700">
               <span className="font-medium text-slate-900">{session.name}</span>
               <span className="text-slate-300">|</span>
               <button type="button" onClick={handleLogout} className="font-medium text-brand-purple hover:text-brand-purple-dark">
                 Logout
               </button>
             </div>
+          )}
+          {!session && (
+            <Link
+              to="/login"
+              className="inline-flex items-center rounded-md border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:text-brand-purple-dark"
+            >
+              Login
+            </Link>
           )}
         </div>
 
@@ -106,6 +114,15 @@ export default function Navbar() {
             >
               Logout
             </button>
+          )}
+          {!session && (
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="mt-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+            >
+              Login
+            </Link>
           )}
         </div>
       )}

@@ -5,10 +5,10 @@ const statusFilters = ['all', 'active', 'upcoming', 'planned', 'completed']
 
 function StatusBadge({ status }) {
   const styles = {
-    upcoming: 'bg-brand-purple-light text-brand-purple',
+    upcoming: 'bg-amber-50 text-amber-700',
     active: 'bg-red-100 text-red-700',
-    planned: 'bg-blue-100 text-blue-700',
-    completed: 'bg-gray-200 text-gray-500',
+    planned: 'bg-amber-50 text-amber-700',
+    completed: 'bg-emerald-50 text-emerald-700',
   }
   const labels = { upcoming: 'Upcoming', active: 'Active', planned: 'Planned', completed: 'Completed' }
   return (
@@ -41,7 +41,7 @@ export default function Calendar() {
     <div className="min-h-screen bg-brand-lavender py-12 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="mb-10">
-          <h1 className="font-display text-3xl font-bold text-gray-900 mb-2">Maintenance Calendar</h1>
+          <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">Maintenance Calendar</h1>
           <p className="text-gray-500 text-sm">Scheduled maintenance published by NEA — updated weekly</p>
         </div>
 
@@ -60,7 +60,7 @@ export default function Calendar() {
           </div>
           <button
             onClick={() => setSortAsc(prev => !prev)}
-            className="flex items-center gap-1 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:border-brand-purple hover:text-brand-purple transition-colors font-medium"
+            className="flex items-center gap-1 rounded-lg border border-brand-purple bg-white px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple-dark hover:text-brand-purple-dark"
           >
             Sort by Date {sortAsc ? 'Asc' : 'Desc'}
             <SortIcon />
@@ -68,7 +68,7 @@ export default function Calendar() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-[#D8E7F0] shadow-sm bg-white">
           <table className="w-full text-sm text-left">
             <thead className="bg-brand-navy text-white">
               <tr>
@@ -84,11 +84,11 @@ export default function Calendar() {
                 </tr>
               ) : (
                 filtered.map((row, i) => (
-                  <tr key={row.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-brand-purple-light transition-colors`}>
-                    <td className="px-5 py-4 font-medium text-gray-700">{row.date}</td>
-                    <td className="px-5 py-4 text-gray-600">{row.area}</td>
-                    <td className="px-5 py-4 text-gray-600">{row.work}</td>
-                    <td className="px-5 py-4 text-gray-600">{row.time}</td>
+                  <tr key={row.id} className={`${i % 2 === 0 ? 'bg-white' : 'bg-[#F8FCFE]'} hover:bg-brand-lavender transition-colors`}>
+                    <td className="px-5 py-4 font-medium text-slate-700">{row.date}</td>
+                    <td className="px-5 py-4 text-slate-600">{row.area}</td>
+                    <td className="px-5 py-4 text-slate-600">{row.work}</td>
+                    <td className="px-5 py-4 text-slate-600">{row.time}</td>
                     <td className="px-5 py-4"><StatusBadge status={row.status} /></td>
                   </tr>
                 ))

@@ -1,6 +1,0 @@
-This favicon was generated using the following font:
-
-- Font Title: Labrada
-- Font Author: undefined
-- Font Source: https://fonts.gstatic.com/s/labrada/v3/ieVv2Y9HLWefIpOyPVxQIkLq2VfhwMCbCEJ8SvN2fy17-dE.ttf
-- Font License: undefined)

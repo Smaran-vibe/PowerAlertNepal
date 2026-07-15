@@ -12,27 +12,36 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-navy text-gray-300 py-10 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <ElectricPoleIcon className="w-5 h-5 text-brand-yellow" />
-              <span className="font-display text-lg font-semibold text-white">PowerAlert Nepal</span>
+    <footer className="border-t border-slate-200 bg-brand-navy px-4 py-12 text-slate-300">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-start">
+          <div className="max-w-md">
+            <div className="flex items-center gap-2">
+              <ElectricPoleIcon className="h-5 w-5 text-brand-yellow" />
+              <span className="text-lg font-semibold tracking-tight text-white">PowerAlert Nepal</span>
             </div>
-            <p className="text-xs text-gray-400">Area-based power cut alerts for NEA consumers</p>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              Area-based power cut alerts for NEA consumers.
+            </p>
+            <p className="mt-4 max-w-sm text-xs leading-6 text-slate-500">
+              Built as a student demonstration project. All outage data shown here is mock data for UI testing and presentation.
+            </p>
           </div>
-          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-300">
+
+          <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm text-slate-300 sm:grid-cols-3 lg:grid-cols-1 lg:justify-items-end">
             {footerLinks.map(link => (
               <li key={link.to}>
-                <Link to={link.to} className="hover:text-white transition-colors">{link.label}</Link>
+                <Link to={link.to} className="transition-colors hover:text-white">
+                  {link.label}
+                </Link>
               </li>
             ))}
           </ul>
         </div>
-        <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-gray-400">
-          <p>2026 PowerAlert Nepal. Not real project</p>
-          <p>No real NEA services are provided. All data is mock.</p>
+
+        <div className="mt-10 border-t border-slate-700 pt-6 text-xs text-slate-500 sm:flex sm:items-center sm:justify-between">
+          <p>2026 PowerAlert Nepal. Not a real project.</p>
+          <p className="mt-2 sm:mt-0">No real NEA services are provided.</p>
         </div>
       </div>
     </footer>

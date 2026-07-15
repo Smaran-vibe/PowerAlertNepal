@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import AuthShell from '../components/AuthShell'
 import { useAuth } from '../context/AuthContext'
 
@@ -32,15 +33,17 @@ function LockIcon() {
 
 export default function Signup() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { signup, isAuthenticated } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [error, setError] = useState('')
+  const from = location.state?.from || '/'
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/', { replace: true })
+      navigate(from, { replace: true, state: location.state })
     }
-  }, [isAuthenticated, navigate])
+  }, [from, isAuthenticated, location.state, navigate])
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -66,7 +69,7 @@ export default function Signup() {
       return
     }
 
-    navigate('/', { replace: true })
+    navigate('/login', { replace: true, state: location.state })
   }
 
   return (
@@ -77,6 +80,7 @@ export default function Signup() {
       footerText="Already have an account?"
       footerLink="/login"
       footerLinkLabel="Login instead"
+      footerLinkState={location.state}
     >
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
         {error && (
