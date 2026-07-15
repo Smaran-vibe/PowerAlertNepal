@@ -42,12 +42,12 @@ PowerAlert Nepal solves this by providing a single, searchable, area-based web p
 | Technology | Purpose |
 |---|---|
 | React 18 | Component-based UI |
-| React Router DOM v6 | Multi-page routing and protected routes |
+| React Router DOM v6 | Client-side routing |
 | Tailwind CSS v3 | Utility-first responsive styling |
 | Vite | Build tool and dev server |
 | Context API | Global authentication state |
 | localStorage API | User auth and report persistence |
-| Google Fonts | DM Sans typography |
+| Google Fonts | IBM Plex Sans typography |
 
 ---
 
@@ -98,7 +98,7 @@ poweralert-nepal/
 │   │   ├── Navbar.jsx
 │   │   ├── Footer.jsx
 │   │   ├── OutageCard.jsx
-│   │   └── ProtectedRoute.jsx
+│   │   └── ActionSparkIcon.jsx
 │   ├── pages/
 │   │   ├── Home.jsx          # Hero, search, live status
 │   │   ├── Alerts.jsx        # All outages with filter
@@ -121,13 +121,16 @@ poweralert-nepal/
 
 | Route | Page | Access |
 |---|---|---|
-| `/` | Home — search and live status | Protected |
-| `/alerts` | All power cut alerts | Protected |
-| `/calendar` | Maintenance calendar | Protected |
-| `/report` | Submit fault report | Protected |
-| `/about` | About and contact | Protected |
+| `/` | Home — search and live status | Public |
+| `/alerts` | All power cut alerts | Public |
+| `/calendar` | Maintenance calendar | Public |
+| `/report` | Submit fault report | Public |
+| `/about` | About and contact | Public |
+| `/login` | Sign in | Public |
+| `/register` | Create account | Public |
+| `/forgot-password` | Password recovery | Public |
 
-All routes except `/login` and `/signup` require authentication. Unauthenticated users are redirected to `/login` automatically.
+The report page is public. Authentication is only required when submitting a report, and unauthenticated users are prompted to sign in or create an account before final submission.
 
 ---
 ## Data Layer
@@ -165,7 +168,7 @@ export const outageData = [
 ## Learning Outcomes
 
 - React component architecture and reusable components
-- Protected routing with React Router DOM v6
+- Client-side routing with React Router DOM v6
 - Global state management with Context API
 - Dynamic content rendering with `.map()` from data arrays
 - Form validation with inline error messages
