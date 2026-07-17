@@ -77,12 +77,20 @@ export default function Navbar() {
             </div>
           )}
           {!session && (
-            <Link
-              to="/login"
-              className="inline-flex items-center rounded-md border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:text-brand-purple-dark"
-            >
-              Login
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                to="/login"
+                className="inline-flex items-center rounded-md border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:text-brand-purple-dark"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center rounded-md bg-brand-purple px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-purple-dark"
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
 
@@ -116,13 +124,22 @@ export default function Navbar() {
             </button>
           )}
           {!session && (
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              className="mt-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
-            >
-              Login
-            </Link>
+            <div className="mt-1 flex flex-col gap-2">
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-lg bg-brand-purple px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:bg-brand-purple-dark"
+              >
+                Sign Up
+              </Link>
+            </div>
           )}
         </div>
       )}
