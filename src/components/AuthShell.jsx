@@ -34,8 +34,7 @@ export default function AuthShell({
               Stay ahead of outages with one account.
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-white/80 sm:text-base">
-              Use the authentication screens required by the assignment to present a complete consumer portal experience,
-              even when the authentication flow is UI-only.
+              Please authenticate our website to know the powercut beforehand.
             </p>
           </div>
 
@@ -43,7 +42,6 @@ export default function AuthShell({
             {[
               'Login for returning users',
               'Register a new consumer account',
-              'Recover access with password reset UI',
               'Consistent design across all auth pages',
             ].map(item => (
               <div key={item} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4">
