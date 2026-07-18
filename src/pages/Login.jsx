@@ -57,7 +57,7 @@ export default function Login() {
     <AuthShell
       eyebrow="Authentication UI"
       title="Login"
-      description="A clean sign-in page for returning users."
+      description="Sign up"
       footerText="New here?"
       footerLink="/register"
       footerLinkLabel="Create an account"
@@ -117,8 +117,10 @@ export default function Login() {
           Sign In
         </button>
 
-        <p className="text-center text-xs leading-5 text-gray-500">
-          This assignment version focuses on the interface. Authentication logic can be connected later.
+        <p className="text-center text-sm text-gray-600">
+          <Link to="/" className="font-semibold text-brand-purple hover:underline">
+            Return to home
+          </Link>
         </p>
       </form>
     </AuthShell>
