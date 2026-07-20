@@ -104,6 +104,14 @@ export const maintenanceData = [
     time: "06:00 AM - 08:30 AM",
     status: "completed",
   },
+  {
+    id: 7,
+    date: "2026-07-20",
+    area: "Kirtipur, Kathmandu",
+    work: "Pole installation",
+    time: "06:00 AM - 08:30 AM",
+    status: "planned",
+  },
 ]
 
 export const liveStatusData = [
