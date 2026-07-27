@@ -16,7 +16,7 @@ export default function ForgotPassword() {
     <AuthShell
       eyebrow="Authentication UI"
       title="Forgot Password"
-      description="A password recovery page for the assignment. It is UI only, with no email delivery wired in."
+      description="Recover your password"
       footerText="Remembered your password?"
       footerLink="/login"
       footerLinkLabel="Return to login"
