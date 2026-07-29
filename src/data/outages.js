@@ -130,5 +130,12 @@ export const liveStatusData = [
     restoration: "2:00 PM today",
     message: "NEA crew currently on site.",
   },
+  {
+    id: 3,
+    area: "Koteshwor, Ward 32, Kathmandu",
+    status: "on",
+    nextCut: "Today, 2:00 PM",
+    message: "No active outage. Power supply is stable.",
+  },
 
 ]
