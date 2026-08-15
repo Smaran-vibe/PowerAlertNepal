@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -39,18 +40,34 @@ function SignupRedirect() {
 }
 
 export default function App() {
+  const { isRestoring } = useAuth()
+
+  if (isRestoring) {
+    return (
+      <>
+        <Toaster position="top-right" />
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-sm text-gray-500">Loading...</p>
+        </div>
+      </>
+    )
+  }
+
   return (
-    <Routes>
-      <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
-      <Route path="/register" element={<AuthRedirect><Signup /></AuthRedirect>} />
-      <Route path="/signup" element={<SignupRedirect />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/" element={<Layout><Home /></Layout>} />
-      <Route path="/alerts" element={<Layout><Alerts /></Layout>} />
-      <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
-      <Route path="/report" element={<Layout><Report /></Layout>} />
-      <Route path="/about" element={<Layout><About /></Layout>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
+        <Route path="/register" element={<AuthRedirect><Signup /></AuthRedirect>} />
+        <Route path="/signup" element={<SignupRedirect />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/alerts" element={<Layout><Alerts /></Layout>} />
+        <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
+        <Route path="/report" element={<Layout><Report /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   )
 }
