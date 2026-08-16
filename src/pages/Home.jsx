@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as reportService from '../services/report.service'
 import * as noticeService from '../services/notice.service'
+import * as announcementService from '../services/announcement.service'
 import * as statsService from '../services/stats.service'
 import { getErrorMessage } from '../utils/errorHandler'
 import OutageCard from '../components/OutageCard'
@@ -20,7 +21,7 @@ function SearchIcon() {
 function deriveOutageStatus(report) {
   if (report.status === 'Verified') return 'active'
   if (report.status === 'Resolved') return 'restored'
-  return 'scheduled'
+  return null
 }
 
 function formatOutageReason(report) {
@@ -28,12 +29,15 @@ function formatOutageReason(report) {
 }
 
 function mapReportToOutage(report) {
+  const status = deriveOutageStatus(report)
+  if (!status) return null
+
   return {
     id: report._id,
     area: `${report.municipality}, Ward ${report.ward}, ${report.district}`,
     time: new Date(report.createdAt).toLocaleString(),
     reason: formatOutageReason(report),
-    status: deriveOutageStatus(report),
+    status,
     restoration: report.estimatedRestoreTime
       ? new Date(report.estimatedRestoreTime).toLocaleString()
       : 'TBD',
@@ -83,9 +87,12 @@ export default function Home() {
   const [results, setResults] = useState(null)
   const [publicReports, setPublicReports] = useState([])
   const [publicNotices, setPublicNotices] = useState([])
+  const [publicAnnouncements, setPublicAnnouncements] = useState([])
   const [publicStats, setPublicStats] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [announcementsLoading, setAnnouncementsLoading] = useState(true)
+  const [announcementsError, setAnnouncementsError] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -132,7 +139,45 @@ export default function Home() {
     }
   }, [])
 
-  const outageCards = useMemo(() => publicReports.map(mapReportToOutage), [publicReports])
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadAnnouncements() {
+      setAnnouncementsLoading(true)
+      setAnnouncementsError('')
+
+      try {
+        const result = await announcementService.getPublicAnnouncements({
+          page: 1,
+          limit: 3,
+        })
+
+        if (!cancelled) {
+          setPublicAnnouncements(result.data.announcements || [])
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setAnnouncementsError(getErrorMessage(err))
+          setPublicAnnouncements([])
+        }
+      } finally {
+        if (!cancelled) {
+          setAnnouncementsLoading(false)
+        }
+      }
+    }
+
+    loadAnnouncements()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const outageCards = useMemo(
+    () => publicReports.map(mapReportToOutage).filter(Boolean),
+    [publicReports]
+  )
   const maintenanceCards = useMemo(() => publicNotices.map(mapNoticeToMaintenanceRow), [publicNotices])
 
   const activeOutageCount = publicStats?.totalActiveOutages ?? outageCards.filter(item => item.status === 'active').length
@@ -152,7 +197,7 @@ export default function Home() {
   const helpCards = [
     {
       title: 'Check outages by area',
-      body: 'Search your ward or neighborhood to see scheduled, active, and restored power cuts in one place.',
+      body: 'Search your ward or neighborhood to see verified and restored power cuts in one place.',
     },
     {
       title: 'Plan around maintenance',
@@ -285,6 +330,46 @@ export default function Home() {
       <section className="bg-white px-4 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.35fr_0.65fr] lg:items-start">
           <div className="max-w-md">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">Public Updates</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              Latest announcements from NEA.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+              View the latest published notices and announcements that are meant to be seen by citizens.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {announcementsLoading ? (
+              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center text-slate-500 shadow-sm md:col-span-2">
+                Loading announcements...
+              </div>
+            ) : announcementsError ? (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-14 text-center text-red-700 shadow-sm md:col-span-2">
+                {announcementsError}
+              </div>
+            ) : publicAnnouncements.length === 0 ? (
+              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center text-slate-500 shadow-sm md:col-span-2">
+                No public announcements have been posted yet.
+              </div>
+            ) : (
+              publicAnnouncements.map((announcement) => (
+                <div key={announcement._id} className="rounded-2xl border border-[#D8E7F0] bg-white p-6 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-purple">
+                    {new Date(announcement.createdAt).toLocaleDateString()}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-slate-900">{announcement.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{announcement.content}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white px-4 py-16 sm:px-6 lg:py-20">
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.35fr_0.65fr] lg:items-start">
+          <div className="max-w-md">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">How We Help</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
               Clear outage information for planning your day.
@@ -311,14 +396,14 @@ export default function Home() {
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">Current Outages</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                {results ? 'Search Results' : 'Active and upcoming outages'}
+                {results ? 'Search Results' : 'Verified and restored outages'}
               </h2>
               <p className="mt-3 text-sm leading-7 text-slate-600">
                 {results
                   ? results.length === 0
                     ? 'No outages found for that area.'
                     : `Showing ${results.length} result${results.length !== 1 ? 's' : ''}.`
-                  : 'Browse the latest outage data or search by ward and area to narrow the list.'}
+                  : 'Browse the latest verified outage data or search by ward and area to narrow the list.'}
               </p>
             </div>
 

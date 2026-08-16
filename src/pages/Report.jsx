@@ -70,10 +70,15 @@ export default function Report() {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAuthPrompt, setShowAuthPrompt] = useState(false)
+  const [showMyReportsPrompt, setShowMyReportsPrompt] = useState(false)
+  const [hasHydratedDraft, setHasHydratedDraft] = useState(false)
 
   useEffect(() => {
     const draft = readDraft()
-    if (!draft) return
+    if (!draft) {
+      setHasHydratedDraft(true)
+      return
+    }
 
     if (draft.form) setForm({ ...initialForm, ...draft.form })
     if (draft.coords) setCoords(draft.coords)
@@ -81,9 +86,13 @@ export default function Report() {
       setImagePreviewUrl(draft.image.dataUrl)
       setImageMeta({ name: draft.image.name, type: draft.image.type })
     }
+
+    setHasHydratedDraft(true)
   }, [])
 
   useEffect(() => {
+    if (!hasHydratedDraft) return
+
     writeDraft({
       form,
       coords,
@@ -95,7 +104,7 @@ export default function Report() {
           }
         : null,
     })
-  }, [form, coords, imagePreviewUrl, imageMeta])
+  }, [form, coords, imagePreviewUrl, imageMeta, hasHydratedDraft])
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -196,12 +205,20 @@ export default function Report() {
             <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">Report a Power Cut</h1>
             <p className="text-gray-500 text-sm">Experiencing an unscheduled outage? Submit a report and we will flag it to NEA.</p>
           </div>
-          <Link
-            to="/my-reports"
+          <button
+            type="button"
+            onClick={() => {
+              if (!isAuthenticated) {
+                setShowMyReportsPrompt(true)
+                return
+              }
+
+              navigate('/my-reports')
+            }}
             className="shrink-0 whitespace-nowrap rounded-lg border border-brand-purple px-4 py-2 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple-light"
           >
             My Reports
-          </Link>
+          </button>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8">
@@ -364,6 +381,35 @@ export default function Report() {
               <button
                 type="button"
                 onClick={() => setShowAuthPrompt(false)}
+                className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMyReportsPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">Login required</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">To view your report, please log in</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Sign in first to see the reports you submitted and track their status.
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => navigate('/login', { state: { from: '/my-reports' } })}
+                className="rounded-xl bg-brand-purple px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-purple-dark"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowMyReportsPrompt(false)}
                 className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Cancel

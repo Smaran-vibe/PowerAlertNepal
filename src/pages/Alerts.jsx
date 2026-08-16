@@ -2,19 +2,17 @@ import React, { useEffect, useMemo, useState } from 'react'
 import * as reportService from '../services/report.service'
 import { getErrorMessage } from '../utils/errorHandler'
 
-const STATUS_FILTERS = ['all', 'Pending', 'Verified', 'Resolved']
+const STATUS_FILTERS = ['all', 'Verified', 'Resolved']
 const PAGE_LIMIT = 100
 
 function StatusBadge({ status }) {
   const styles = {
-    Pending: 'border-amber-400/30 bg-amber-400/10 text-amber-700',
     Verified: 'border-sky-400/30 bg-sky-400/10 text-sky-700',
     Resolved: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-700',
-    Rejected: 'border-rose-400/30 bg-rose-400/10 text-rose-700',
   }
 
   return (
-    <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${styles[status] || styles.Pending}`}>
+    <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${styles[status] || 'border-slate-200 bg-slate-100 text-slate-600'}`}>
       {status}
     </span>
   )
