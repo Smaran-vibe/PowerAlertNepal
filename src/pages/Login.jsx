@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import AuthShell from '../components/AuthShell'
 import { useAuth } from '../context/AuthContext'
+import { getErrorMessage } from '../utils/errorHandler'
 
 function MailIcon() {
   return (
@@ -25,10 +27,11 @@ function LockIcon() {
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, user } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
-  const from = location.state?.from || '/'
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const from = location.state?.from || (user?.role === 'admin' ? '/admin' : '/')
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -41,23 +44,28 @@ export default function Login() {
     setError('')
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
+    setIsSubmitting(true)
 
-    const result = login(form)
-    if (!result.ok) {
-      setError(result.message)
-      return
+    try {
+      const authenticatedUser = await login(form)
+      toast.success('Welcome back!')
+      const destination = location.state?.from || (authenticatedUser?.role === 'admin' ? '/admin' : '/')
+      navigate(destination, { replace: true, state: location.state })
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setIsSubmitting(false)
     }
-
-    navigate(from, { replace: true, state: location.state })
   }
 
   return (
     <AuthShell
-      eyebrow="Authentication UI"
+      eyebrow="Welcome back"
       title="Login"
-      description="Sign up"
+      description="Sign in to track outages and manage your reports."
       footerText="New here?"
       footerLink="/register"
       footerLinkLabel="Create an account"
@@ -65,14 +73,14 @@ export default function Login() {
     >
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-3 text-sm text-red-100">
             {error}
           </div>
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">Email address</label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+          <label className="text-sm font-medium text-white/80">Email address</label>
+          <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
             <span className="text-gray-400"><MailIcon /></span>
             <input
               name="email"
@@ -80,14 +88,15 @@ export default function Login() {
               placeholder="you@example.com"
               value={form.email}
               onChange={handleChange}
-              className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+              disabled={isSubmitting}
+              className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">Password</label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+          <label className="text-sm font-medium text-white/80">Password</label>
+          <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
             <span className="text-gray-400"><LockIcon /></span>
             <input
               name="password"
@@ -95,30 +104,32 @@ export default function Login() {
               placeholder="Enter your password"
               value={form.password}
               onChange={handleChange}
-              className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+              disabled={isSubmitting}
+              className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <label className="flex items-center gap-2 text-sm text-gray-600">
-            <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-brand-purple focus:ring-brand-purple" />
+          <label className="flex items-center gap-2 text-sm text-white/70">
+            <input type="checkbox" disabled={isSubmitting} className="h-4 w-4 rounded border-white/30 bg-white/10 text-auth-cyan-charge focus:ring-auth-cyan-charge disabled:cursor-not-allowed disabled:opacity-60" />
             Remember me
           </label>
-          <Link to="/forgot-password" className="text-sm font-semibold text-brand-purple hover:underline">
+          <Link to="/forgot-password" className="text-sm font-semibold text-auth-cyan-charge hover:underline">
             Forgot password?
           </Link>
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-brand-purple px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-purple-dark"
+          disabled={isSubmitting}
+          className="w-full rounded-full bg-auth-volt-blue px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Sign In
+          {isSubmitting ? 'Signing in...' : 'Sign In'}
         </button>
 
-        <p className="text-center text-sm text-gray-600">
-          <Link to="/" className="font-semibold text-brand-purple hover:underline">
+        <p className="text-center text-sm text-white/70">
+          <Link to="/" className="font-semibold text-auth-cyan-charge hover:underline">
             Return to home
           </Link>
         </p>

@@ -1,14 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
-function ShieldIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 4v5c0 5-3.5 9-7 9s-7-4-7-9V7l7-4z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 12.5l1.7 1.7 3.8-4.1" />
-    </svg>
-  )
-}
+import PAMonogram from './PAMonogram'
 
 export default function AuthShell({
   eyebrow,
@@ -21,64 +13,55 @@ export default function AuthShell({
   footerLinkState,
 }) {
   return (
-    <div className="min-h-screen bg-[#F5FAFD] px-4 py-10">
-      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl overflow-hidden rounded-[2rem] border border-[#D8E7F0] bg-white/90 shadow-[0_30px_80px_rgba(15,23,42,0.08)] backdrop-blur-sm lg:grid-cols-[1.05fr_0.95fr]">
-        <aside className="relative flex flex-col justify-between overflow-hidden bg-brand-purple px-8 py-10 text-white lg:px-10">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,_rgba(255,255,255,0.07)_0%,_transparent_38%,_rgba(59,175,218,0.16)_100%)]" />
-          <div className="relative z-10">
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white/80">
-              <ShieldIcon />
-              PowerAlert Nepal
+    <div className="relative min-h-screen overflow-hidden bg-auth-deep-current px-4 py-10">
+      {/* Abstract blue/cyan gradient background — pure CSS, no image asset */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,_rgba(243,231,206,0.16)_0%,_transparent_35%),radial-gradient(circle_at_85%_15%,_rgba(56,221,224,0.20)_0%,_transparent_45%),linear-gradient(160deg,_#0A1E4A_0%,_#123A8F_45%,_#2451D6_75%,_#0A1E4A_100%)]" />
+        <div className="absolute -left-32 top-1/3 h-96 w-96 rounded-full bg-auth-cyan-charge/20 blur-[100px]" />
+        <div className="absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-auth-volt-blue/30 blur-[110px]" />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col items-center justify-center">
+        <div className="mb-7 flex flex-col items-center gap-3 text-center">
+          <div className="relative flex h-16 w-16 items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-auth-cyan-charge/40 blur-xl" />
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-sm">
+              <PAMonogram className="h-7 w-7" />
             </div>
-            <h1 className="font-sans text-4xl font-bold leading-tight text-white sm:text-5xl">
-              Stay ahead of outages with one account.
-            </h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-white/80 sm:text-base">
-              Please authenticate our website to know the powercut beforehand.
-            </p>
           </div>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+            PowerAlert Nepal
+          </p>
+        </div>
 
-          <div className="relative z-10 mt-10 grid gap-3 text-sm text-white/85 sm:grid-cols-2">
-            {[
-              'Login for returning users',
-              'Register a new consumer account',
-              'Consistent design across all auth pages',
-            ].map(item => (
-              <div key={item} className="rounded-2xl border border-white/10 bg-white/10 px-4 py-4">
-                {item}
-              </div>
-            ))}
-          </div>
-        </aside>
-
-        <main className="flex items-center justify-center px-5 py-10 sm:px-8">
-          <div className="w-full max-w-md">
-            <div className="mb-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-yellow">
+        <div className="w-full rounded-3xl border border-white/15 bg-white/10 p-6 shadow-[0_25px_70px_rgba(6,15,40,0.45)] backdrop-blur-md sm:p-8">
+          <div className="mb-6">
+            {eyebrow && (
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-auth-cyan-charge">
                 {eyebrow}
               </p>
-              <h2 className="mt-3 font-sans text-3xl font-bold text-gray-900 sm:text-4xl">
-                {title}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-gray-500">
+            )}
+            <h1 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">
+              {title}
+            </h1>
+            {description && (
+              <p className="mt-2 text-sm leading-6 text-white/70">
                 {description}
-              </p>
-            </div>
-
-            <div className="rounded-[1.5rem] border border-[#D8E7F0] bg-white p-6 shadow-sm sm:p-8">
-              {children}
-            </div>
-
-            {footerText && footerLink && footerLinkLabel && (
-              <p className="mt-6 text-center text-sm text-gray-600">
-                {footerText}{' '}
-                <Link to={footerLink} state={footerLinkState} className="font-semibold text-brand-purple hover:underline">
-                  {footerLinkLabel}
-                </Link>
               </p>
             )}
           </div>
-        </main>
+
+          {children}
+        </div>
+
+        {footerText && footerLink && footerLinkLabel && (
+          <p className="mt-6 text-center text-sm text-white/70">
+            {footerText}{' '}
+            <Link to={footerLink} state={footerLinkState} className="font-semibold text-auth-cyan-charge hover:underline">
+              {footerLinkLabel}
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   )

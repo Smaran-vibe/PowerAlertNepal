@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import AuthShell from '../components/AuthShell'
 import { useAuth } from '../context/AuthContext'
+import { getErrorMessage } from '../utils/errorHandler'
 
 function UserIcon() {
   return (
@@ -37,6 +39,7 @@ export default function Signup() {
   const { signup, isAuthenticated } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const from = location.state?.from || '/'
 
   useEffect(() => {
@@ -50,7 +53,7 @@ export default function Signup() {
     setError('')
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
     if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
@@ -63,20 +66,25 @@ export default function Signup() {
       return
     }
 
-    const result = signup(form)
-    if (!result.ok) {
-      setError(result.message)
-      return
-    }
+    setError('')
+    setIsSubmitting(true)
 
-    navigate('/login', { replace: true, state: location.state })
+    try {
+      await signup({ fullName: form.name, email: form.email, password: form.password })
+      toast.success('Account created! Please log in.')
+      navigate('/login', { replace: true, state: location.state })
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <AuthShell
-      eyebrow="Authentication UI"
+      eyebrow="Get started"
       title="Registration"
-      description="Create an account and store it in localStorage. The app opens after signup or login."
+      description="Create your PowerAlert Nepal account to report and track outages."
       footerText="Already have an account?"
       footerLink="/login"
       footerLinkLabel="Login instead"
@@ -84,14 +92,14 @@ export default function Signup() {
     >
       <form className="flex flex-col gap-5" onSubmit={handleSubmit} noValidate>
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-3 text-sm text-red-100">
             {error}
           </div>
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">Full name</label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+          <label className="text-sm font-medium text-white/80">Full name</label>
+          <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
             <span className="text-gray-400"><UserIcon /></span>
             <input
               name="name"
@@ -99,14 +107,15 @@ export default function Signup() {
               placeholder="Your name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+              disabled={isSubmitting}
+              className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-700">Email address</label>
-          <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+          <label className="text-sm font-medium text-white/80">Email address</label>
+          <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
             <span className="text-gray-400"><MailIcon /></span>
             <input
               name="email"
@@ -114,15 +123,16 @@ export default function Signup() {
               placeholder="you@example.com"
               value={form.email}
               onChange={handleChange}
-              className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+              disabled={isSubmitting}
+              className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
             />
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">Password</label>
-            <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+            <label className="text-sm font-medium text-white/80">Password</label>
+            <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
               <span className="text-gray-400"><LockIcon /></span>
               <input
                 name="password"
@@ -130,14 +140,15 @@ export default function Signup() {
                 placeholder="Create password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+                disabled={isSubmitting}
+                className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">Confirm password</label>
-            <div className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 focus-within:border-brand-purple focus-within:ring-2 focus-within:ring-brand-purple/10">
+            <label className="text-sm font-medium text-white/80">Confirm password</label>
+            <div className="flex items-center gap-3 rounded-2xl border border-transparent bg-white px-4 py-3 focus-within:border-auth-cyan-charge focus-within:ring-2 focus-within:ring-auth-cyan-charge/30">
               <span className="text-gray-400"><LockIcon /></span>
               <input
                 name="confirmPassword"
@@ -145,27 +156,25 @@ export default function Signup() {
                 placeholder="Repeat password"
                 value={form.confirmPassword}
                 onChange={handleChange}
-                className="w-full border-0 p-0 text-sm outline-none placeholder:text-gray-400 focus:ring-0"
+                disabled={isSubmitting}
+                className="w-full border-0 p-0 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
           </div>
         </div>
 
-        <label className="flex items-start gap-2 text-sm text-gray-600">
-          <input type="checkbox" className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-purple focus:ring-brand-purple" />
+        <label className="flex items-start gap-2 text-sm text-white/70">
+          <input type="checkbox" disabled={isSubmitting} className="mt-1 h-4 w-4 rounded border-white/30 bg-white/10 text-auth-cyan-charge focus:ring-auth-cyan-charge disabled:cursor-not-allowed disabled:opacity-60" />
           <span>I agree to receive outage alerts and updates from PowerAlert Nepal.</span>
         </label>
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-brand-purple px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-purple-dark"
+          disabled={isSubmitting}
+          className="w-full rounded-full bg-auth-volt-blue px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Create Account
+          {isSubmitting ? 'Creating account...' : 'Create Account'}
         </button>
-
-        <p className="text-center text-xs leading-5 text-gray-500">
-          Your registration is saved locally in this browser.
-        </p>
       </form>
     </AuthShell>
   )

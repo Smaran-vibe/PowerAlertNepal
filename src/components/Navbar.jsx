@@ -31,7 +31,7 @@ export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { session, logout } = useAuth()
+  const { user, logout } = useAuth()
 
   function isActive(path) {
     return location.pathname === path
@@ -40,7 +40,7 @@ export default function Navbar() {
   function handleLogout() {
     logout()
     setMenuOpen(false)
-    navigate('/login')
+    navigate('/')
   }
 
   return (
@@ -67,16 +67,24 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden items-center gap-3 md:flex">
-          {session && (
+          {user && (
             <div className="flex items-center gap-3 border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm text-slate-700">
-              <span className="font-medium text-slate-900">{session.name}</span>
+              <span className="font-medium text-slate-900">{user.fullName}</span>
+              {user.role === 'admin' && (
+                <>
+                  <span className="text-slate-300">|</span>
+                  <Link to="/admin" className="font-medium text-brand-purple hover:text-brand-purple-dark">
+                    Admin Portal
+                  </Link>
+                </>
+              )}
               <span className="text-slate-300">|</span>
               <button type="button" onClick={handleLogout} className="font-medium text-brand-purple hover:text-brand-purple-dark">
                 Logout
               </button>
             </div>
           )}
-          {!session && (
+          {!user && (
             <div className="flex items-center gap-3">
               <Link
                 to="/login"
@@ -114,16 +122,27 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          {session && (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="mt-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
-            >
-              Logout
-            </button>
+          {user && (
+            <div className="mt-1 flex flex-col gap-2">
+              {user.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+                >
+                  Admin Portal
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+              >
+                Logout
+              </button>
+            </div>
           )}
-          {!session && (
+          {!user && (
             <div className="mt-1 flex flex-col gap-2">
               <Link
                 to="/login"

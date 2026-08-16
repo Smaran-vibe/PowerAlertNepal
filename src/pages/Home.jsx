@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { maintenanceData, outageData } from '../data/outages'
+import * as reportService from '../services/report.service'
+import * as noticeService from '../services/notice.service'
+import * as statsService from '../services/stats.service'
+import { getErrorMessage } from '../utils/errorHandler'
 import OutageCard from '../components/OutageCard'
 import ActionSparkIcon from '../components/ActionSparkIcon'
 import heroVideo from '../Reference/poweralert.mp4'
@@ -14,34 +17,51 @@ function SearchIcon() {
   )
 }
 
-const activeOutageCount = outageData.filter(item => item.status === 'active').length
-const openMaintenanceCount = maintenanceData.filter(item => item.status !== 'completed').length
-const uniqueAreaCount = new Set([
-  ...outageData.map(item => item.area),
-  ...maintenanceData.map(item => item.area),
-]).size
+function deriveOutageStatus(report) {
+  if (report.status === 'Verified') return 'active'
+  if (report.status === 'Resolved') return 'restored'
+  return 'scheduled'
+}
 
-const stats = [
-  { label: 'Current outage notices', value: String(outageData.length) },
-  { label: 'Active outages', value: String(activeOutageCount) },
-  { label: 'Open maintenance items', value: String(openMaintenanceCount) },
-  { label: 'Areas covered', value: String(uniqueAreaCount) },
-]
+function formatOutageReason(report) {
+  return report.outageType || report.description || 'No reason provided'
+}
 
-const helpCards = [
-  {
-    title: 'Check outages by area',
-    body: 'Search your ward or neighborhood to see scheduled, active, and restored power cuts in one place.',
-  },
-  {
-    title: 'Plan around maintenance',
-    body: 'Review upcoming NEA work so homes, schools, and businesses can prepare backup power in advance.',
-  },
-  {
-    title: 'Report unexpected faults',
-    body: 'Send a simple report when power goes out without notice and keep track of what was submitted.',
-  },
-]
+function mapReportToOutage(report) {
+  return {
+    id: report._id,
+    area: `${report.municipality}, Ward ${report.ward}, ${report.district}`,
+    time: new Date(report.createdAt).toLocaleString(),
+    reason: formatOutageReason(report),
+    status: deriveOutageStatus(report),
+    restoration: report.estimatedRestoreTime
+      ? new Date(report.estimatedRestoreTime).toLocaleString()
+      : 'TBD',
+    ward: `Ward ${report.ward}`,
+  }
+}
+
+function deriveMaintenanceStatus(notice) {
+  const now = new Date()
+  const start = new Date(notice.scheduledStart)
+  const end = new Date(notice.scheduledEnd)
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return 'planned'
+  if (now < start) return 'upcoming'
+  if (now >= start && now <= end) return 'active'
+  return 'completed'
+}
+
+function mapNoticeToMaintenanceRow(notice) {
+  return {
+    id: notice._id,
+    date: new Date(notice.scheduledStart).toLocaleDateString(),
+    area: `${notice.municipality ? `${notice.municipality}, ` : ''}${notice.district}`,
+    work: notice.title,
+    time: `${new Date(notice.scheduledStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(notice.scheduledEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+    status: deriveMaintenanceStatus(notice),
+  }
+}
 
 const maintenanceStatusStyles = {
   upcoming: 'border-amber-200 bg-amber-50 text-amber-700',
@@ -61,17 +81,103 @@ export default function Home() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState(null)
+  const [publicReports, setPublicReports] = useState([])
+  const [publicNotices, setPublicNotices] = useState([])
+  const [publicStats, setPublicStats] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadHomeData() {
+      setIsLoading(true)
+      setError('')
+
+      try {
+        const [reportsResult, noticesResult, statsResult] = await Promise.all([
+          reportService.getPublicReports({
+            page: 1,
+            limit: 100,
+            sortBy: 'createdAt',
+            order: 'desc',
+          }),
+          noticeService.getPublicNotices({
+            page: 1,
+            limit: 100,
+          }),
+          statsService.getPublicStats(),
+        ])
+
+        if (cancelled) return
+
+        setPublicReports(reportsResult.data.reports || [])
+        setPublicNotices(noticesResult.data.notices || [])
+        setPublicStats(statsResult.data.stats || null)
+      } catch (err) {
+        if (!cancelled) {
+          setError(getErrorMessage(err))
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadHomeData()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const outageCards = useMemo(() => publicReports.map(mapReportToOutage), [publicReports])
+  const maintenanceCards = useMemo(() => publicNotices.map(mapNoticeToMaintenanceRow), [publicNotices])
+
+  const activeOutageCount = publicStats?.totalActiveOutages ?? outageCards.filter(item => item.status === 'active').length
+  const openMaintenanceCount = maintenanceCards.filter(item => item.status !== 'completed').length
+  const uniqueAreaCount = new Set([
+    ...outageCards.map(item => item.area),
+    ...maintenanceCards.map(item => item.area),
+  ]).size
+
+  const stats = [
+    { label: 'Current outage notices', value: String(publicReports.length) },
+    { label: 'Active outages', value: String(activeOutageCount) },
+    { label: 'Open maintenance items', value: String(openMaintenanceCount) },
+    { label: 'Areas covered', value: String(uniqueAreaCount) },
+  ]
+
+  const helpCards = [
+    {
+      title: 'Check outages by area',
+      body: 'Search your ward or neighborhood to see scheduled, active, and restored power cuts in one place.',
+    },
+    {
+      title: 'Plan around maintenance',
+      body: 'Review upcoming NEA work so homes, schools, and businesses can prepare backup power in advance.',
+    },
+    {
+      title: 'Report unexpected faults',
+      body: 'Send a simple report when power goes out without notice and keep track of what was submitted.',
+    },
+  ]
 
   function handleSearch() {
     const q = query.trim().toLowerCase()
     if (!q) {
-      setResults(outageData)
+      setResults(null)
       return
     }
 
-    const filtered = outageData.filter(
-      o => o.area.toLowerCase().includes(q) || o.ward.toLowerCase().includes(q)
+    const filtered = outageCards.filter((item) =>
+      item.area.toLowerCase().includes(q) ||
+      item.ward.toLowerCase().includes(q) ||
+      item.reason.toLowerCase().includes(q) ||
+      item.status.toLowerCase().includes(q)
     )
+
     setResults(filtered)
 
     setTimeout(() => {
@@ -83,9 +189,10 @@ export default function Home() {
     if (e.key === 'Enter') handleSearch()
   }
 
+  const displayOutages = results || outageCards
+
   return (
     <div>
-      {/* Hero */}
       <section className="relative overflow-hidden bg-white px-0 py-0">
         <div className="relative h-[470px] w-full overflow-hidden rounded-none border-y border-slate-200 shadow-[0_20px_60px_rgba(15,42,26,0.08)] sm:h-[520px] lg:h-[680px]">
           <video
@@ -113,7 +220,7 @@ export default function Home() {
                 </h1>
 
                 <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-                  Find outages, review maintenance schedules, and report unexpected cuts with a clean public-utility interface built for everyday use.
+                  Find outages, review maintenance schedules, and report unexpected cuts with live data from the PowerAlert Nepal backend.
                 </p>
 
                 <div className="mt-5">
@@ -156,7 +263,7 @@ export default function Home() {
                 </div>
 
                 <p className="mt-4 text-xs leading-6 text-slate-500">
-                  Covering Kathmandu, Lalitpur, Bhaktapur, Pokhara, and nearby districts with mock consumer data for demonstration.
+                  Covering Kathmandu, Lalitpur, Bhaktapur, and nearby districts with live backend data.
                 </p>
               </div>
             </div>
@@ -164,7 +271,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
       <section className="border-y border-[#D8E7F0] bg-brand-lavender px-4 py-10 sm:px-6">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map(s => (
@@ -176,7 +282,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How We Help */}
       <section className="bg-white px-4 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.35fr_0.65fr] lg:items-start">
           <div className="max-w-md">
@@ -200,7 +305,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Current Outages */}
       <section id="current-outages" className="bg-brand-lavender px-4 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex flex-col gap-3 text-left sm:flex-row sm:items-end sm:justify-between">
@@ -226,7 +330,15 @@ export default function Home() {
             </button>
           </div>
 
-          {results && results.length === 0 ? (
+          {isLoading ? (
+            <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center text-slate-500 shadow-sm">
+              Loading current outage data...
+            </div>
+          ) : error ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-14 text-center text-red-700 shadow-sm">
+              {error}
+            </div>
+          ) : displayOutages.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center text-slate-500 shadow-sm">
               <SearchIcon />
               <p className="mt-4 text-base">No outages found for that area. Try a different ward or area name.</p>
@@ -236,7 +348,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {(results || outageData).map(outage => (
+              {displayOutages.map(outage => (
                 <OutageCard key={outage.id} outage={outage} />
               ))}
             </div>
@@ -244,7 +356,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Maintenance */}
       <section className="bg-white px-4 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.35fr_0.65fr] lg:items-start">
           <div className="max-w-md">
@@ -258,7 +369,7 @@ export default function Home() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {maintenanceData.map(row => (
+            {maintenanceCards.map(row => (
               <div key={row.id} className="rounded-2xl border border-[#D8E7F0] bg-white p-6 shadow-sm">
                 <div className="flex items-start justify-between gap-4">
                   <div>

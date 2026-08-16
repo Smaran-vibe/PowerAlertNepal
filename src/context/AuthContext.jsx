@@ -1,88 +1,156 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
-
-const USERS_KEY = 'pa_users'
-const SESSION_KEY = 'pa_session'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
+import * as authService from '../services/auth.service'
+import { setAccessToken as setApiAccessToken, setOnAuthFailure, resetAuthState } from '../services/api'
 
 const AuthContext = createContext(null)
+const AUTH_SYNC_KEY = 'poweralert-auth-sync'
 
-function readUsers() {
+function readAuthSync() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(USERS_KEY) || '[]')
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
-
-function readSession() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
-    return parsed && typeof parsed === 'object' ? parsed : null
+    const raw = localStorage.getItem(AUTH_SYNC_KEY)
+    return raw ? JSON.parse(raw) : null
   } catch {
     return null
   }
 }
 
+function writeAuthSync(payload) {
+  try {
+    localStorage.setItem(AUTH_SYNC_KEY, JSON.stringify(payload))
+  } catch {
+    // Ignore storage failures and keep the in-memory session working.
+  }
+}
+
+function clearAuthSync() {
+  try {
+    localStorage.removeItem(AUTH_SYNC_KEY)
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [users, setUsers] = useState(() => readUsers())
-  const [session, setSession] = useState(() => readSession())
+  const [user, setUser] = useState(null)
+  const [accessToken, setAccessToken] = useState(null)
+  const [isRestoring, setIsRestoring] = useState(true)
 
-  function persistUsers(nextUsers) {
-    setUsers(nextUsers)
-    localStorage.setItem(USERS_KEY, JSON.stringify(nextUsers))
+  function applyAuthState(nextUser, nextToken) {
+    setUser(nextUser)
+    setAccessToken(nextToken)
+    setApiAccessToken(nextToken)
+    setIsRestoring(false)
   }
 
-  function persistSession(nextSession) {
-    setSession(nextSession)
-    if (nextSession) {
-      localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession))
-    } else {
-      localStorage.removeItem(SESSION_KEY)
+  useEffect(() => {
+    setOnAuthFailure(() => {
+      resetAuthState()
+      setAccessToken(null)
+      setUser(null)
+      clearAuthSync()
+      toast.error('Your session has expired. Please log in again.')
+    })
+
+    return () => {
+      setOnAuthFailure(null)
     }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function restoreSession() {
+      try {
+        const refreshResult = await authService.refresh()
+        const token = refreshResult.data.accessToken
+
+        const meResult = await authService.getMe()
+
+        if (!cancelled) {
+          const restoredUser = meResult.data.user
+          applyAuthState(restoredUser, token)
+          writeAuthSync({ user: restoredUser, accessToken: token })
+        }
+      } catch {
+        if (!cancelled) {
+          setAccessToken(null)
+          setUser(null)
+          setApiAccessToken(null)
+          clearAuthSync()
+        }
+      } finally {
+        if (!cancelled) {
+          setIsRestoring(false)
+        }
+      }
+    }
+
+    restoreSession()
+
+    function handleStorage(event) {
+      if (event.key !== AUTH_SYNC_KEY) return
+
+      const synced = event.newValue ? readAuthSync() : null
+
+      if (!synced) {
+        resetAuthState()
+        setAccessToken(null)
+        setUser(null)
+        setIsRestoring(false)
+        return
+      }
+
+      setAccessToken(synced.accessToken || null)
+      setUser(synced.user || null)
+      setApiAccessToken(synced.accessToken || null)
+      setIsRestoring(false)
+    }
+
+    window.addEventListener('storage', handleStorage)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('storage', handleStorage)
+    }
+  }, [])
+
+  async function signup({ fullName, email, password }) {
+    const result = await authService.register({ fullName, email, password })
+    return result
   }
 
-  function signup({ name, email, password }) {
-    const normalizedEmail = email.trim().toLowerCase()
-    const existing = readUsers().find(user => user.email === normalizedEmail)
-    if (existing) {
-      return { ok: false, message: 'An account with this email already exists.' }
-    }
+  async function login({ email, password }) {
+    const result = await authService.login({ email, password })
+    const authenticatedUser = result.data.user
 
-    const nextUser = {
-      id: Date.now(),
-      name: name.trim(),
-      email: normalizedEmail,
-      password,
-    }
+    applyAuthState(authenticatedUser, result.data.accessToken)
+    writeAuthSync({ user: authenticatedUser, accessToken: result.data.accessToken })
 
-    const nextUsers = [...readUsers(), nextUser]
-    persistUsers(nextUsers)
-    return { ok: true }
+    return authenticatedUser
   }
 
-  function login({ email, password }) {
-    const normalizedEmail = email.trim().toLowerCase()
-    const found = readUsers().find(user => user.email === normalizedEmail && user.password === password)
-    if (!found) {
-      return { ok: false, message: 'Invalid email or password.' }
+  async function logout() {
+    try {
+      await authService.logout()
+      toast.success('Logged out successfully')
+    } finally {
+      setAccessToken(null)
+      setUser(null)
+      resetAuthState()
+      clearAuthSync()
     }
-
-    persistSession({ id: found.id, name: found.name, email: found.email })
-    return { ok: true }
-  }
-
-  function logout() {
-    persistSession(null)
   }
 
   const value = useMemo(() => ({
-    users,
-    session,
-    isAuthenticated: Boolean(session),
+    user,
+    accessToken,
+    isAuthenticated: Boolean(user),
+    isRestoring,
     signup,
     login,
     logout,
-  }), [users, session])
+  }), [user, accessToken, isRestoring])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

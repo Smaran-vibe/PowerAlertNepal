@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['IBM Plex Sans', 'sans-serif'],
+        display: ['Sora', 'sans-serif'],
       },
       colors: {
         brand: {
@@ -15,7 +16,13 @@ export default {
           'navy-card': '#123044',
           lavender: '#EDF6FB',
           yellow: '#3BAFDA',
-        }
+        },
+        auth: {
+          'deep-current': '#0A1E4A',
+          'volt-blue': '#2451D6',
+          'cyan-charge': '#38DDE0',
+          'dawn-haze': '#F3E7CE',
+        },
       }
     },
   },
