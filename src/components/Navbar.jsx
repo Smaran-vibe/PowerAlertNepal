@@ -44,21 +44,21 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-0">
+    <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#081425]/85 text-white backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <ElectricPoleIcon className="h-5 w-5 text-brand-purple" />
-          <span className="text-[1.05rem] font-semibold tracking-tight text-slate-900">
-            PowerAlert <span className="text-brand-purple">Nepal</span>
+          <ElectricPoleIcon className="h-5 w-5 text-auth-cyan-charge" />
+          <span className="text-[1.05rem] font-semibold tracking-tight text-white">
+            PowerAlert <span className="text-auth-cyan-charge">Nepal</span>
           </span>
         </Link>
 
-        <ul className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
+        <ul className="hidden items-center gap-8 text-sm font-medium text-slate-300 md:flex">
           {navLinks.map(link => (
             <li key={link.to}>
               <Link
                 to={link.to}
-                className={`relative py-1 transition-colors hover:text-brand-purple ${isActive(link.to) ? 'font-semibold text-brand-purple' : ''}`}
+                className={`relative py-1 transition-colors hover:text-auth-cyan-charge ${isActive(link.to) ? 'font-semibold text-white' : ''}`}
               >
                 {link.label}
               </Link>
@@ -68,18 +68,18 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           {user && (
-            <div className="flex items-center gap-3 border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm text-slate-700">
-              <span className="font-medium text-slate-900">{user.fullName}</span>
+            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-slate-200">
+              <span className="font-medium text-white">{user.fullName}</span>
               {user.role === 'admin' && (
                 <>
-                  <span className="text-slate-300">|</span>
-                  <Link to="/admin" className="font-medium text-brand-purple hover:text-brand-purple-dark">
+                  <span className="text-slate-500">|</span>
+                  <Link to="/admin" className="font-medium text-auth-cyan-charge hover:text-white">
                     Admin Portal
                   </Link>
                 </>
               )}
-              <span className="text-slate-300">|</span>
-              <button type="button" onClick={handleLogout} className="font-medium text-brand-purple hover:text-brand-purple-dark">
+              <span className="text-slate-500">|</span>
+              <button type="button" onClick={handleLogout} className="font-medium text-auth-cyan-charge hover:text-white">
                 Logout
               </button>
             </div>
@@ -88,13 +88,13 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="inline-flex items-center rounded-md border border-[#D8E7F0] bg-brand-lavender px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:text-brand-purple-dark"
+                className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/15"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="inline-flex items-center rounded-md bg-brand-purple px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-purple-dark"
+                className="inline-flex items-center rounded-full bg-auth-volt-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:brightness-110"
               >
                 Sign Up
               </Link>
@@ -103,7 +103,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="md:hidden text-slate-700"
+          className="md:hidden text-white"
           onClick={() => setMenuOpen(prev => !prev)}
         >
           {menuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -111,13 +111,13 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="flex flex-col gap-2 border-t border-slate-200 bg-white px-4 py-4 md:hidden">
+        <div className="flex flex-col gap-2 border-t border-white/10 bg-[#07111F] px-4 py-4 md:hidden">
           {navLinks.map(link => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMenuOpen(false)}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-brand-lavender hover:text-brand-purple ${isActive(link.to) ? 'bg-brand-purple-light text-brand-purple' : 'text-slate-700'}`}
+              className={`rounded-2xl px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5 hover:text-auth-cyan-charge ${isActive(link.to) ? 'bg-white/10 text-white' : 'text-slate-300'}`}
             >
               {link.label}
             </Link>
@@ -128,7 +128,7 @@ export default function Navbar() {
                 <Link
                   to="/admin"
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+                  className="rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:bg-white/15"
                 >
                   Admin Portal
                 </Link>
@@ -136,7 +136,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+                className="rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:bg-white/15"
               >
                 Logout
               </button>
@@ -147,14 +147,14 @@ export default function Navbar() {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-left text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple hover:bg-brand-purple-light"
+                className="rounded-2xl border border-white/10 bg-white/10 px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:bg-white/15"
               >
                 Login
               </Link>
               <Link
                 to="/register"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg bg-brand-purple px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:bg-brand-purple-dark"
+                className="rounded-2xl bg-auth-volt-blue px-4 py-2 text-left text-sm font-medium text-white transition-colors hover:brightness-110"
               >
                 Sign Up
               </Link>

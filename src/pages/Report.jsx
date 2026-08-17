@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import ActionSparkIcon from '../components/ActionSparkIcon'
 import * as reportService from '../services/report.service'
@@ -198,12 +198,13 @@ export default function Report() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-lavender py-12 px-4">
+    <div className="min-h-screen bg-[#0A1E4A] py-12 px-4 text-white">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10 flex items-start justify-between gap-4">
           <div>
-            <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">Report a Power Cut</h1>
-            <p className="text-gray-500 text-sm">Experiencing an unscheduled outage? Submit a report and we will flag it to NEA.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-auth-cyan-charge">Citizen report</p>
+            <h1 className="mt-2 font-display text-3xl font-bold text-white mb-2">Report a Power Cut</h1>
+            <p className="text-sm text-slate-300">Experiencing an unscheduled outage? Submit a report and we will flag it to NEA.</p>
           </div>
           <button
             type="button"
@@ -215,22 +216,22 @@ export default function Report() {
 
               navigate('/my-reports')
             }}
-            className="shrink-0 whitespace-nowrap rounded-lg border border-brand-purple px-4 py-2 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple-light"
+            className="shrink-0 whitespace-nowrap rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15"
           >
             My Reports
           </button>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8">
+        <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_16px_40px_rgba(2,8,23,0.22)] backdrop-blur-sm">
           {error && (
-            <div className="mb-5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+            <div className="mb-5 rounded-lg border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Title</label>
+              <label className="text-sm font-medium text-slate-200">Title</label>
               <input
                 name="title"
                 type="text"
@@ -238,12 +239,12 @@ export default function Report() {
                 value={form.title}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Description</label>
+              <label className="text-sm font-medium text-slate-200">Description</label>
               <textarea
                 name="description"
                 rows={4}
@@ -251,19 +252,19 @@ export default function Report() {
                 value={form.description}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition resize-none disabled:cursor-not-allowed disabled:opacity-60"
+                className="resize-none rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">District</label>
+                <label className="text-sm font-medium text-slate-200">District</label>
                 <select
                   name="district"
                   value={form.district}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition bg-white text-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <option value="">Select district...</option>
                   {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -271,7 +272,7 @@ export default function Report() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">Ward</label>
+                <label className="text-sm font-medium text-slate-200">Ward</label>
                 <input
                   name="ward"
                   type="number"
@@ -280,13 +281,13 @@ export default function Report() {
                   value={form.ward}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Municipality</label>
+              <label className="text-sm font-medium text-slate-200">Municipality</label>
               <input
                 name="municipality"
                 type="text"
@@ -294,18 +295,18 @@ export default function Report() {
                 value={form.municipality}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-400 focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Type of Issue</label>
+              <label className="text-sm font-medium text-slate-200">Type of Issue</label>
               <select
                 name="outageType"
                 value={form.outageType}
                 onChange={handleChange}
                 disabled={isSubmitting}
-                className="border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-purple transition bg-white text-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3 text-sm text-white outline-none focus:border-auth-cyan-charge focus:ring-2 focus:ring-auth-cyan-charge/20 transition disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="">Select issue type...</option>
                 {OUTAGE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -313,21 +314,21 @@ export default function Report() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700">Photo (optional, JPEG/PNG/WEBP, max 5MB)</label>
+              <label className="text-sm font-medium text-slate-200">Photo (optional, JPEG/PNG/WEBP, max 5MB)</label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={handleImageChange}
                 disabled={isSubmitting}
-                className="text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-purple-light file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-purple hover:file:bg-brand-lavender disabled:cursor-not-allowed disabled:opacity-60"
+                className="text-sm text-slate-300 file:mr-4 file:rounded-lg file:border-0 file:bg-auth-volt-blue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               />
               {imagePreviewUrl && (
-                <img src={imagePreviewUrl} alt="Selected preview" className="mt-2 h-32 w-32 rounded-lg object-cover border border-gray-200" />
+                <img src={imagePreviewUrl} alt="Selected preview" className="mt-2 h-32 w-32 rounded-lg border border-white/10 object-cover" />
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 px-4 py-3">
-              <div className="text-sm text-gray-600">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-[#0F244F] px-4 py-3">
+              <div className="text-sm text-slate-200">
                 {coords
                   ? `Location captured (${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)})`
                   : 'Location not shared (optional)'}
@@ -336,7 +337,7 @@ export default function Report() {
                 type="button"
                 onClick={useMyLocation}
                 disabled={isSubmitting || isLocating}
-                className="shrink-0 whitespace-nowrap text-sm font-semibold text-brand-purple hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                className="shrink-0 whitespace-nowrap text-sm font-semibold text-auth-cyan-charge hover:underline disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isLocating ? 'Locating...' : 'Use my current location'}
               </button>
@@ -345,7 +346,7 @@ export default function Report() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-brand-purple hover:bg-brand-purple-dark text-white font-bold rounded-lg transition-colors text-sm disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-auth-volt-blue py-3 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <ActionSparkIcon className="w-5 h-5 text-brand-yellow" />
               {isSubmitting ? 'Submitting...' : 'Submit Report'}
@@ -356,10 +357,10 @@ export default function Report() {
 
       {showAuthPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4">
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">Sign in required</p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">Sign in to submit your report</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0A1E4A] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-auth-cyan-charge">Sign in required</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">Sign in to submit your report</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-200">
               Your report is ready. Please sign in or create an account to submit it.
             </p>
 
@@ -367,21 +368,21 @@ export default function Report() {
               <button
                 type="button"
                 onClick={() => navigate('/login', { state: { from: '/report' } })}
-                className="rounded-xl bg-brand-purple px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-purple-dark"
+                className="rounded-xl bg-auth-volt-blue px-4 py-3 text-sm font-semibold text-white transition-colors hover:brightness-110"
               >
                 Sign In
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/register', { state: { from: '/report' } })}
-                className="rounded-xl border border-brand-purple px-4 py-3 text-sm font-semibold text-brand-purple transition-colors hover:bg-brand-purple-light"
+                className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
               >
                 Create Account
               </button>
               <button
                 type="button"
                 onClick={() => setShowAuthPrompt(false)}
-                className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10"
               >
                 Cancel
               </button>
@@ -392,10 +393,10 @@ export default function Report() {
 
       {showMyReportsPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4">
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-purple">Login required</p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">To view your report, please log in</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0A1E4A] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-auth-cyan-charge">Login required</p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">To view your report, please log in</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-200">
               Sign in first to see the reports you submitted and track their status.
             </p>
 
@@ -403,14 +404,14 @@ export default function Report() {
               <button
                 type="button"
                 onClick={() => navigate('/login', { state: { from: '/my-reports' } })}
-                className="rounded-xl bg-brand-purple px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-purple-dark"
+                className="rounded-xl bg-auth-volt-blue px-4 py-3 text-sm font-semibold text-white transition-colors hover:brightness-110"
               >
                 Sign In
               </button>
               <button
                 type="button"
                 onClick={() => setShowMyReportsPrompt(false)}
-                className="rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition-colors hover:bg-white/10"
               >
                 Cancel
               </button>

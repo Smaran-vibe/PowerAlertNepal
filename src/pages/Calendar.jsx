@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import * as noticeService from '../services/notice.service'
 import { getErrorMessage } from '../utils/errorHandler'
+import CitizenSurfaceCard from '../components/citizen/CitizenSurfaceCard'
 
 const statusFilters = ['all', 'upcoming', 'active', 'completed']
 
 function StatusBadge({ status }) {
   const styles = {
-    upcoming: 'border-amber-400/30 bg-amber-400/10 text-amber-700',
-    active: 'border-red-400/30 bg-red-400/10 text-red-700',
-    completed: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-700',
+    upcoming: 'border-amber-400/30 bg-amber-400/10 text-amber-100',
+    active: 'border-red-400/30 bg-red-400/10 text-red-100',
+    completed: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100',
   }
 
   return (
-    <span className={`rounded-full border px-2 py-0.5 text-xs font-bold capitalize ${styles[status] || styles.upcoming}`}>
+    <span className={`rounded-full border px-2 py-0.5 text-xs font-bold capitalize ${styles[status] || 'border-white/10 bg-white/5 text-slate-300'}`}>
       {status}
     </span>
   )
@@ -103,14 +104,18 @@ export default function Calendar() {
   }, [notices, sortAsc, statusFilter])
 
   return (
-    <div className="min-h-screen bg-brand-lavender px-4 py-12">
+    <div className="min-h-screen bg-auth-deep-current px-4 py-12 text-white">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
-          <h1 className="mb-2 font-sans text-3xl font-bold text-gray-900">Maintenance Calendar</h1>
-          <p className="text-sm text-gray-500">Scheduled maintenance notices from the PowerAlert Nepal backend.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-auth-cyan-charge">Maintenance calendar</p>
+          <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Maintenance Calendar</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
+            Scheduled maintenance notices from the PowerAlert Nepal backend.
+          </p>
         </div>
 
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:justify-between">
+        <CitizenSurfaceCard className="mb-6 bg-white/10 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
           <div className="flex flex-wrap gap-2">
             {statusFilters.map((status) => (
               <button
@@ -119,8 +124,8 @@ export default function Calendar() {
                 onClick={() => setStatusFilter(status)}
                 className={`rounded-lg border px-3 py-1.5 text-sm font-semibold capitalize transition-colors ${
                   statusFilter === status
-                    ? 'border-brand-purple bg-brand-purple text-white'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-brand-purple hover:text-brand-purple'
+                    ? 'border-auth-cyan-charge bg-auth-cyan-charge text-white'
+                    : 'border-white/10 bg-white/5 text-slate-200 hover:border-auth-cyan-charge hover:text-white'
                 }`}
               >
                 {status}
@@ -130,25 +135,27 @@ export default function Calendar() {
           <button
             type="button"
             onClick={() => setSortAsc((prev) => !prev)}
-            className="flex items-center gap-1 rounded-lg border border-brand-purple bg-white px-4 py-2 text-sm font-medium text-brand-purple transition-colors hover:border-brand-purple-dark hover:text-brand-purple-dark"
+            className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-auth-cyan-charge hover:text-white"
           >
             Sort by Date {sortAsc ? 'Asc' : 'Desc'}
             <SortIcon />
           </button>
-        </div>
+          </div>
+        </CitizenSurfaceCard>
 
         {isLoading ? (
-          <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center text-sm text-gray-400 shadow-sm">
+          <CitizenSurfaceCard className="p-8 text-center text-sm text-slate-300">
             Loading maintenance notices...
-          </div>
+          </CitizenSurfaceCard>
         ) : error ? (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center shadow-sm">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
+          <CitizenSurfaceCard className="border-red-400/20 bg-red-400/10 p-8 text-center text-red-100">
+            <p className="text-sm">{error}</p>
+          </CitizenSurfaceCard>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-[#D8E7F0] bg-white shadow-sm">
+          <CitizenSurfaceCard className="overflow-hidden bg-white/5">
+            <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-brand-navy text-white">
+              <thead className="bg-auth-deep-current text-white">
                 <tr>
                   {['Date', 'Area', 'Type of Work', 'Time Window', 'Status'].map((heading) => (
                     <th key={heading} className="px-5 py-4 font-semibold">
@@ -157,23 +164,23 @@ export default function Calendar() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-white/10">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-10 text-center text-gray-400">
+                    <td colSpan={5} className="py-10 text-center text-slate-300">
                       No records found.
                     </td>
                   </tr>
                 ) : (
                   filtered.map((row, index) => (
-                    <tr key={row._id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#F8FCFE]'} transition-colors hover:bg-brand-lavender`}>
-                      <td className="px-5 py-4 font-medium text-slate-700">{formatDate(row.scheduledStart)}</td>
-                      <td className="px-5 py-4 text-slate-600">
+                    <tr key={row._id} className={`${index % 2 === 0 ? 'bg-white/5' : 'bg-white/10'} transition-colors hover:bg-white/15`}>
+                      <td className="px-5 py-4 font-medium text-white">{formatDate(row.scheduledStart)}</td>
+                      <td className="px-5 py-4 text-slate-200">
                         {row.municipality ? `${row.municipality}, ` : ''}
                         {row.district}
                       </td>
-                      <td className="px-5 py-4 text-slate-600">{row.title}</td>
-                      <td className="px-5 py-4 text-slate-600">{formatTimeWindow(row.scheduledStart, row.scheduledEnd)}</td>
+                      <td className="px-5 py-4 text-slate-200">{row.title}</td>
+                      <td className="px-5 py-4 text-slate-200">{formatTimeWindow(row.scheduledStart, row.scheduledEnd)}</td>
                       <td className="px-5 py-4">
                         <StatusBadge status={row.status} />
                       </td>
@@ -182,7 +189,8 @@ export default function Calendar() {
                 )}
               </tbody>
             </table>
-          </div>
+            </div>
+          </CitizenSurfaceCard>
         )}
       </div>
     </div>
