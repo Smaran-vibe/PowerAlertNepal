@@ -4,23 +4,23 @@ const aboutCards = [
   {
     id: 1,
     title: 'The Problem',
-    body: 'NEA publishes power cut notices on Facebook pages, WhatsApp groups, and scattered PDF notices. There is no single searchable, area-based web platform. Consumers find out about cuts only when their lights go off.',
+    body: 'Outage notices are often published across different channels, making area-specific updates difficult to find in one place. Consumers need a clearer way to follow scheduled disruptions and live status changes.',
   },
   {
     id: 2,
     title: 'Our Solution',
-    body: 'PowerAlert Nepal organizes all NEA maintenance notices in one place. Search by ward or area, see upcoming cuts with time and reason, track live status, and report unscheduled outages — all in one clean platform.',
+    body: 'PowerAlert Nepal brings outage notices, maintenance schedules, and citizen reports into a single searchable platform. Browse by ward or area, review timing and reason details, track live status, and submit unscheduled outage reports in one place.',
   },
   {
     id: 3,
     title: 'The Impact',
-    body: 'Students can plan study time, offices can schedule backups, hospitals can prepare generators, and businesses can avoid losses. Knowing 24 hours ahead turns a disruption into a manageable event.',
+    body: 'Households, offices, schools, hospitals, and businesses can plan ahead, reduce disruption, and respond more confidently when outages are announced early.',
   },
 ]
 
 const contactInfo = [
-  { label: 'Email', value: 'support@poweralertnepal.mock' },
-  { label: 'Phone', value: '+977-1-XXXXXXX' },
+  { label: 'Email', value: 'support@poweralertnepal.com' },
+  { label: 'Phone', value: '+977-1-444-0000' },
   { label: 'Office', value: 'Kathmandu, Bagmati Province, Nepal' },
   { label: 'Response Time', value: 'Within 24 hours (weekdays)' },
 ]
@@ -63,7 +63,7 @@ export default function About() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-10 text-center">
             <h1 className="font-sans text-3xl font-bold text-gray-900 mb-2">About PowerAlert Nepal</h1>
-            <p className="text-gray-500 text-sm">Why this platform was built</p>
+            <p className="text-gray-500 text-sm">A public information platform for outage updates, maintenance notices, and citizen reporting.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {aboutCards.map(card => (

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import toast from 'react-hot-toast'
+import toast from '../components/Toast/toast'
 import { useAuth } from '../context/AuthContext'
 import * as adminService from '../services/admin.service'
 import { getErrorMessage } from '../utils/errorHandler'

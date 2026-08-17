@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import toast from 'react-hot-toast'
 import * as authService from '../services/auth.service'
 import { setAccessToken as setApiAccessToken, setOnAuthFailure, resetAuthState } from '../services/api'
+import toast from '../components/Toast/toast'
 
 const AuthContext = createContext(null)
 const AUTH_SYNC_KEY = 'poweralert-auth-sync'
+const REPORT_DRAFT_KEY = 'poweralert-report-draft'
 
 function readAuthSync() {
   try {
@@ -19,7 +20,7 @@ function writeAuthSync(payload) {
   try {
     localStorage.setItem(AUTH_SYNC_KEY, JSON.stringify(payload))
   } catch {
-    // Ignore storage failures and keep the in-memory session working.
+
   }
 }
 
@@ -27,7 +28,15 @@ function clearAuthSync() {
   try {
     localStorage.removeItem(AUTH_SYNC_KEY)
   } catch {
-    // Ignore storage failures.
+
+  }
+}
+
+function clearReportDraft() {
+  try {
+    sessionStorage.removeItem(REPORT_DRAFT_KEY)
+  } catch {
+
   }
 }
 
@@ -49,6 +58,7 @@ export function AuthProvider({ children }) {
       setAccessToken(null)
       setUser(null)
       clearAuthSync()
+      clearReportDraft()
       toast.error('Your session has expired. Please log in again.')
     })
 
@@ -139,6 +149,7 @@ export function AuthProvider({ children }) {
       setUser(null)
       resetAuthState()
       clearAuthSync()
+      clearReportDraft()
     }
   }
 

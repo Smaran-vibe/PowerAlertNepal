@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import toast from '../components/Toast/toast'
 import AdminLayout from '../components/admin/AdminLayout'
 import AdminOverview from '../components/admin/AdminOverview'
 import AdminReports from '../components/admin/AdminReports'

@@ -65,9 +65,9 @@ export default function AnnouncementManager({
       <div className="space-y-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Announcements</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">Published feed + admin write actions</h2>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">Announcement feed</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            The backend exposes only the public announcement list, so this section shows published items only. Drafts can still be created, edited, and deleted by ID.
+            Manage public announcements from one place. Published items appear in the citizen portal, while drafts can be saved, edited, or removed here.
           </p>
         </div>
 
@@ -76,14 +76,14 @@ export default function AnnouncementManager({
         ) : error ? (
           <EmptyBlock label={error} />
         ) : announcements.length === 0 ? (
-          <EmptyBlock label="No published announcements found." />
+          <EmptyBlock label="No announcements available." />
         ) : (
           <div className="space-y-3">
             {announcements.map((announcement) => (
               <div key={announcement._id} className="rounded-3xl border border-white/10 bg-[#0B1528] p-5 shadow-[0_18px_45px_rgba(0,0,0,0.22)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Published announcement</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Announcement</p>
                     <h3 className="mt-2 text-lg font-semibold text-white">{announcement.title}</h3>
                   </div>
                   <Badge published={announcement.isPublished} />
@@ -118,10 +118,10 @@ export default function AnnouncementManager({
             {editingAnnouncementId ? 'Edit Announcement' : 'Create Announcement'}
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-            {editingAnnouncementId ? 'Update announcement' : 'Publish a new announcement'}
+            {editingAnnouncementId ? 'Update announcement' : 'Publish an announcement'}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            Create, edit, or delete announcements using the admin endpoints. Published items appear in the public feed.
+            Use this form to create or update an announcement, then choose whether it should be published immediately.
           </p>
         </div>
 
@@ -144,7 +144,7 @@ export default function AnnouncementManager({
                 onChange={(e) => onChange('content', e.target.value)}
                 rows={5}
                 className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500"
-                placeholder="Write the announcement text."
+                placeholder="Write the announcement details."
               />
             </div>
 
@@ -155,7 +155,7 @@ export default function AnnouncementManager({
                 onChange={(e) => onChange('isPublished', e.target.checked)}
                 className="h-4 w-4 rounded border-white/20 bg-white/10 text-cyan-400"
               />
-              Publish immediately
+              Make this announcement visible to the public
             </label>
 
             <div className="flex flex-wrap gap-3 pt-2">

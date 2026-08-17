@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
 import ActionSparkIcon from '../components/ActionSparkIcon'
 import * as reportService from '../services/report.service'
 import { getErrorMessage } from '../utils/errorHandler'
 import { PROVINCE, DISTRICTS, OUTAGE_TYPES } from '../constants/report'
 import { useAuth } from '../context/AuthContext'
+import toast from '../components/Toast/toast'
 
 const initialForm = {
   title: '',
@@ -46,7 +46,7 @@ function writeDraft(payload) {
   try {
     sessionStorage.setItem(REPORT_DRAFT_KEY, JSON.stringify(payload))
   } catch {
-    // Ignore storage failures and keep the current in-memory draft.
+    
   }
 }
 
@@ -54,7 +54,7 @@ function clearDraft() {
   try {
     sessionStorage.removeItem(REPORT_DRAFT_KEY)
   } catch {
-    // Ignore storage failures.
+  
   }
 }
 
@@ -72,6 +72,15 @@ export default function Report() {
   const [showAuthPrompt, setShowAuthPrompt] = useState(false)
   const [showMyReportsPrompt, setShowMyReportsPrompt] = useState(false)
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false)
+
+  function resetReportForm() {
+    setForm(initialForm)
+    setImageFile(null)
+    setImagePreviewUrl(null)
+    setImageMeta(null)
+    setCoords(null)
+    setError('')
+  }
 
   useEffect(() => {
     const draft = readDraft()
@@ -184,11 +193,7 @@ export default function Report() {
       await reportService.createReport(formData)
       toast.success('Report submitted successfully.')
 
-      setForm(initialForm)
-      setImageFile(null)
-      setImagePreviewUrl(null)
-      setImageMeta(null)
-      setCoords(null)
+      resetReportForm()
       clearDraft()
     } catch (err) {
       setError(getErrorMessage(err))
@@ -343,14 +348,27 @@ export default function Report() {
               </button>
             </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-auth-volt-blue py-3 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <ActionSparkIcon className="w-5 h-5 text-brand-yellow" />
-              {isSubmitting ? 'Submitting...' : 'Submit Report'}
-            </button>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => {
+                  resetReportForm()
+                  clearDraft()
+                }}
+                disabled={isSubmitting}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Clear
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-auth-volt-blue py-3 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <ActionSparkIcon className="w-5 h-5 text-brand-yellow" />
+                {isSubmitting ? 'Submitting...' : 'Submit Report'}
+              </button>
+            </div>
           </form>
         </div>
       </div>

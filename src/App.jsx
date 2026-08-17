@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -15,6 +14,7 @@ import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
 import { useAuth } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import ToastProvider from './components/Toast/ToastProvider'
 
 function Layout({ children }) {
   return (
@@ -42,10 +42,6 @@ function SignupRedirect() {
   return <Navigate to="/register" replace state={location.state} />
 }
 
-// Sends an admin whose session was just restored (page refresh) or just
-// synced in from another tab straight to /admin if they're sitting on the
-// public home page. Only fires on that transition, never on later renders,
-// so an admin who deliberately navigates back to "/" isn't bounced again.
 function AdminHomeGuard() {
   const { user } = useAuth()
   const location = useLocation()
@@ -71,18 +67,16 @@ export default function App() {
 
   if (isRestoring) {
     return (
-      <>
-        <Toaster position="top-right" />
+      <ToastProvider>
         <div className="flex min-h-screen items-center justify-center">
           <p className="text-sm text-gray-500">Loading...</p>
         </div>
-      </>
+      </ToastProvider>
     )
   }
 
   return (
-    <>
-      <Toaster position="top-right" />
+    <ToastProvider>
       <AdminHomeGuard />
       <Routes>
         <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
@@ -98,6 +92,6 @@ export default function App() {
         <Route path="/about" element={<Layout><About /></Layout>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
+    </ToastProvider>
   )
 }

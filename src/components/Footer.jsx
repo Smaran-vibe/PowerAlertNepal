@@ -24,7 +24,7 @@ export default function Footer() {
               Area-based power cut alerts for NEA consumers.
             </p>
             <p className="mt-4 max-w-sm text-xs leading-6 text-slate-500">
-              Built as a student demonstration project. All outage data shown here is mock data for UI testing and presentation.
+              PowerAlert Nepal provides a unified view of public outage information, maintenance notices, and citizen reports.
             </p>
           </div>
 
@@ -40,8 +40,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-slate-700 pt-6 text-xs text-slate-500 sm:flex sm:items-center sm:justify-between">
-          <p>2026 PowerAlert Nepal. Not a real project.</p>
-          <p className="mt-2 sm:mt-0">No real NEA services are provided.</p>
+          <p>2026 PowerAlert Nepal. All rights reserved.</p>
+          <p className="mt-2 sm:mt-0">Informational service for public outage awareness and reporting.</p>
         </div>
       </div>
     </footer>

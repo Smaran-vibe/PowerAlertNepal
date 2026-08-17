@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-import toast from 'react-hot-toast'
 import AuthShell from '../components/AuthShell'
 import { useAuth } from '../context/AuthContext'
 import { getErrorMessage } from '../utils/errorHandler'
+import toast from '../components/Toast/toast'
 
 function UserIcon() {
   return (

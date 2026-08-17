@@ -1,196 +1,129 @@
-# PowerAlert Nepal
+# PowerAlert Nepal — Frontend
 
-A modern, responsive web application for real-time power outage alerts, maintenance schedules, and fault reporting for Nepal Electricity Authority (NEA) consumers.
+React frontend for **PowerAlert Nepal**, a power-outage reporting and public
+alert platform. Citizens can view outage/maintenance info and submit reports;
+admins get a dedicated portal to manage reports, users, notices, and
+announcements.
 
----
+## Tech stack
 
-## Preview
-
-![](./assets/prev.png)
-
-
-## Problem Statement
-
-Nepal Electricity Authority (NEA) serves over 3.2 million consumers but has no centralized digital platform for power cut alerts. Consumers currently depend on scattered Facebook posts, WhatsApp groups, and press releases — often finding out about outages only after their lights go off.
-
-PowerAlert Nepal solves this by providing a single, searchable, area-based web platform where any NEA consumer can:
-
-- Search upcoming power cuts by ward or area
-- View the weekly maintenance calendar
-- Check live power ON/OFF status
-- Report unexpected outages directly
-
----
+- **React 18 + Vite** — app shell / dev server / build
+- **React Router v6** — routing, protected routes
+- **Tailwind CSS** — styling
+- **Axios** — API client, with an interceptor that auto-refreshes the access
+  token on 401 responses
+- **react-hot-toast** — notifications
 
 ## Features
 
-- **Area-Based Search** — Search power cuts by ward or area, dynamic card rendering
-- **Color-Coded Outage Cards** — Scheduled, Active, and Restored status at a glance
-- **Maintenance Calendar** — Filter by status, sort by date
-- **Live Power Status** — Real-time ON/OFF display with restoration estimate
-- **Fault Reporting** — Validated form with localStorage persistence, reports displayed on page
-- **Contact Form** — Full email and message validation
-- **Fully Responsive** — Works on mobile, tablet, and desktop
+**Citizen**
+- View public outage reports and maintenance notices
+- Submit an outage report (with optional photo + geolocation)
+- View their own submitted reports
+- Fill out a report while logged out — sign-in is only required at submit time
 
----
+**Admin**
+- Dashboard overview with live stats
+- Verify / resolve / reject / delete reports
+- View and deactivate users
+- Create / update / delete maintenance notices and announcements
 
-## Tech Stack
+## Project structure
 
-| Technology | Purpose |
-|---|---|
-| React 18 | Component-based UI |
-| React Router DOM v6 | Client-side routing |
-| Tailwind CSS v3 | Utility-first responsive styling |
-| Vite | Build tool and dev server |
-| Context API | Global authentication state |
-| localStorage API | User auth and report persistence |
-| Google Fonts | IBM Plex Sans typography |
+```
+src/
+├── main.jsx                # App entry — mounts <App /> in the router
+├── App.jsx                  # Route definitions, auth-aware redirects
+├── context/
+│   └── AuthContext.jsx        # Session state, token refresh, cross-tab sync
+├── services/
+│   ├── api.js                  # Axios instance + auth-refresh interceptor
+│   ├── auth.service.js
+│   ├── report.service.js
+│   ├── notice.service.js
+│   ├── stats.service.js
+│   └── admin.service.js
+├── components/
+│   ├── Navbar.jsx / Footer.jsx / AuthShell.jsx
+│   ├── OutageCard.jsx
+│   ├── ProtectedRoute.jsx       # role-gated route wrapper
+│   └── admin/                    # Admin portal building blocks
+│       ├── AdminLayout.jsx, AdminSidebar.jsx, AdminHeader.jsx
+│       ├── AdminOverview.jsx, AdminReports.jsx, AdminUsers.jsx
+│       ├── AdminMaintenance.jsx, AdminAnnouncements.jsx
+│       ├── ReportsTable.jsx, ReportDetailsModal.jsx, UsersTable.jsx
+│       ├── NoticeManager.jsx, AnnouncementManager.jsx
+│       └── AdminStatCard.jsx
+├── pages/
+│   ├── Home.jsx, Alerts.jsx, Calendar.jsx, About.jsx
+│   ├── Report.jsx, MyReports.jsx
+│   ├── Login.jsx, Signup.jsx, ForgotPassword.jsx
+│   └── AdminDashboard.jsx        # Admin portal orchestrator
+├── hooks/
+│   └── useAdminDashboard.js       # Data + actions for the admin portal
+├── constants/
+│   └── report.js                    # Outage types, province/district data, etc.
+└── utils/
+    └── errorHandler.js               # Normalizes API errors for toasts/forms
+```
 
----
+## Prerequisites
 
-## Getting Started
+- Node.js 18+
+- The backend API running (see the `Backend` repo's README)
 
-### Prerequisites
-
-- Node.js v18 or higher
-- npm v9 or higher
-
-### Installation
+## Getting started
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/poweralert-nepal.git
-
-# 2. Navigate into the project folder
-cd poweralert-nepal
-
-# 3. Install dependencies
+# 1. Install dependencies
 npm install
 
-# 4. Start the development server
+# 2. Set your API URL (see Environment variables below)
+echo "VITE_API_URL=http://localhost:3000" > .env.local
+
+# 3. Run the dev server
 npm run dev
 ```
 
-The app will be running at `http://localhost:5173`
+Vite prints the local dev URL — by default `http://localhost:5173`.
 
-### Build for Production
+## Available scripts
 
-```bash
-npm run build
-```
+| Command           | Description                          |
+|---------------------|-----------------------------------------|
+| `npm run dev`      | Start the Vite dev server                |
+| `npm run build`    | Production build → `dist/`                |
+| `npm run preview`  | Preview the production build locally      |
 
----
+## Environment variables
 
-## Project Structure
+Create a `.env.local` file in the project root:
 
-```
-poweralert-nepal/
-├── index.html
-├── src/
-│   ├── main.jsx              # App entry point
-│   ├── App.jsx               # Routes and layout
-│   ├── index.css             # Global styles
-│   │   
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Footer.jsx
-│   │   ├── OutageCard.jsx
-│   │   └── ActionSparkIcon.jsx
-│   ├── pages/
-│   │   ├── Home.jsx          # Hero, search, live status
-│   │   ├── Alerts.jsx        # All outages with filter
-│   │   ├── Calendar.jsx      # Maintenance calendar
-│   │   ├── Report.jsx        # Fault reporting form
-│   │   ├── About.jsx         # About and contact
-│   │   ├── Login.jsx
-│   │   └── Signup.jsx
-│   └── data/
-│       └── outages.js        # All mock data arrays
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-└── postcss.config.js
-```
+| Variable         | Description                     | Example                 |
+|--------------------|------------------------------------|----------------------------|
+| `VITE_API_URL`   | Base URL of the backend API       | `http://localhost:3000`   |
 
----
+## Connecting to the backend
 
-## Pages & Routes
+- The backend must have `CORS_ORIGIN` set to this app's exact origin (e.g.
+  `http://localhost:5173`) — the API is called with credentials (cookies) for
+  refresh-token support, which requires an explicit CORS allow-list rather
+  than a wildcard.
+- The access token is kept in memory (not `localStorage`); logging in on one
+  tab syncs auth state to other open tabs of the same browser.
 
-| Route | Page | Access |
-|---|---|---|
-| `/` | Home — search and live status | Public |
-| `/alerts` | All power cut alerts | Public |
-| `/calendar` | Maintenance calendar | Public |
-| `/report` | Submit fault report | Public |
-| `/about` | About and contact | Public |
-| `/login` | Sign in | Public |
-| `/register` | Create account | Public |
-| `/forgot-password` | Password recovery | Public |
+## Routing overview
 
-The report page is public. Authentication is only required when submitting a report, and unauthenticated users are prompted to sign in or create an account before final submission.
-
----
-## Data Layer
-
-All outage and maintenance data lives in `src/data/outages.js` as plain JavaScript arrays. To add new outages or maintenance records, simply add a new object to the relevant array.
-
-```js
-
-export const outageData = [
-  {
-    id: 7,
-    area: "Lalitpur, Ekantakuna",
-    time: "08:00 AM - 11:00 AM",
-    reason: "High voltage line maintenance",
-    status: "scheduled",      // "scheduled" | "active" | "restored"
-    restoration: "11:00 AM",
-    ward: "Ward 22",
-  },
-]
-```
-
----
-
-## Future Improvements
-
-- Connect to a real NEA API or data feed for live outage data
-- Push notification support for user-subscribed areas
-- Save preferred ward/area to user profile
-- SMS alerts via Sparrow SMS for non-smartphone users
-- Admin dashboard for NEA staff to post updates
-- Interactive Nepal map with outage overlay
-
----
-
-## Learning Outcomes
-
-- React component architecture and reusable components
-- Client-side routing with React Router DOM v6
-- Global state management with Context API
-- Dynamic content rendering with `.map()` from data arrays
-- Form validation with inline error messages
-- Client-side data persistence with localStorage
-- Responsive design with Tailwind CSS utility classes
-
----
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add your feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
----
-
-## Disclaimer
-
-This is a student web development assignment project. No real NEA services are provided. All outage data shown is mock data for demonstration purposes only.
-
----
+| Route            | Access                | Notes                                              |
+|--------------------|--------------------------|-------------------------------------------------------|
+| `/`               | Public                  | Home — stats + latest outages                       |
+| `/alerts`         | Public                  | Full outage report list                              |
+| `/calendar`       | Public                  | Maintenance notices                                   |
+| `/about`          | Public                  |                                                        |
+| `/report`         | Public to view/fill     | Sign-in is only prompted when the form is submitted   |
+| `/login`, `/register`, `/forgot-password` | Public (redirects away if already logged in) | |
+| `/my-reports`     | Citizen (logged in)     | Redirects to `/login` if not authenticated            |
+| `/admin`          | Admin only              | Redirects non-admins away; restores correctly on refresh |
 
 ## License
 

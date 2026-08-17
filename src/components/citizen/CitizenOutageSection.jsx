@@ -24,7 +24,7 @@ export default function CitizenOutageSection({ outages, isLoading, error, result
           description={
             results
               ? `Showing ${results.length} result${results.length !== 1 ? 's' : ''} from the verified public feed.`
-              : 'Only verified public reports appear here. Pending and rejected citizen reports stay out of the public view.'
+              : 'Verified outage information from the public feed.'
           }
           action={
             <button
@@ -49,7 +49,7 @@ export default function CitizenOutageSection({ outages, isLoading, error, result
           <CitizenSurfaceCard className="bg-white/10 px-6 py-14 text-center text-slate-200">
             <SearchIcon />
             <p className="mt-4 text-base">
-              No verified outages found for that area. Try a different ward or area name.
+              No verified outages currently
             </p>
             {results && (
               <button

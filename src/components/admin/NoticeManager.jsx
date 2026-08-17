@@ -65,9 +65,9 @@ export default function NoticeManager({
       <div className="space-y-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">Maintenance</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">Public notices + admin write actions</h2>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">Maintenance notices</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            Notice listing uses the public endpoint because the backend has no admin GET route. Create, update, and delete still use the admin routes.
+            Review published notices below and use the form to create, update, or remove maintenance updates from the admin panel.
           </p>
         </div>
 
@@ -123,7 +123,7 @@ export default function NoticeManager({
             {editingNoticeId ? 'Update maintenance notice' : 'Publish a new notice'}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            Fill the form to create or update a notice. Dates should be scheduled in local datetime format.
+            Use the form to publish or edit a notice. Enter dates in local datetime format for accurate scheduling.
           </p>
         </div>
 
