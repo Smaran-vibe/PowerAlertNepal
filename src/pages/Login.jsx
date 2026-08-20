@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import GoogleLoginButton from '../components/GoogleLoginButton'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AuthShell from '../components/AuthShell'
 import { useAuth } from '../context/AuthContext'
@@ -127,6 +128,16 @@ export default function Login() {
         >
           {isSubmitting ? 'Signing in...' : 'Sign In'}
         </button>
+
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-white/20" />
+          <span className="text-xs text-white/50">OR</span>
+          <div className="h-px flex-1 bg-white/20" />
+        </div>
+
+        <GoogleLoginButton onError={setError} />
+
+        <p className="text-center text-sm text-white/70"></p>
 
         <p className="text-center text-sm text-white/70">
           <Link to="/" className="font-semibold text-auth-cyan-charge hover:underline">

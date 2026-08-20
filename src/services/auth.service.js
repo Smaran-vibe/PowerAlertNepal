@@ -12,6 +12,12 @@ export function login({ email, password }) {
         .then(response => response.data)
 }
 
+export function googleLogin({ idToken }) {
+    return api
+        .post('/api/auth/google', { idToken })
+        .then(response => response.data)
+}
+
 export function refresh() {
     return api.post('/api/auth/refresh').then(response => response.data)
 }

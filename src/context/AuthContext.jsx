@@ -140,6 +140,16 @@ export function AuthProvider({ children }) {
     return authenticatedUser
   }
 
+  async function loginWithGoogle(idToken) {
+    const result = await authService.googleLogin({ idToken })
+    const authenticatedUser = result.data.user
+
+    applyAuthState(authenticatedUser, result.data.accessToken)
+    writeAuthSync({ user: authenticatedUser, accessToken: result.data.accessToken })
+
+    return authenticatedUser
+  }
+
   async function logout() {
     try {
       await authService.logout()
@@ -160,6 +170,7 @@ export function AuthProvider({ children }) {
     isRestoring,
     signup,
     login,
+    loginWithGoogle,
     logout,
   }), [user, accessToken, isRestoring])
 

@@ -31,6 +31,7 @@ const AUTH_ENDPOINTS_EXCLUDED_FROM_REFRESH = [
     '/api/auth/refresh',
     '/api/auth/login',
     '/api/auth/register',
+    '/api/auth/google',
 ]
 
 function isExcludedFromRefresh(url = '') {
