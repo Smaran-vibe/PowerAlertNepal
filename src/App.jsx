@@ -10,6 +10,7 @@ import MyReports from './pages/MyReports'
 import AdminDashboard from './pages/AdminDashboard'
 import About from './pages/About'
 import Login from './pages/Login'
+import VerifyEmail from './pages/VerifyEmail'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
 import { useAuth } from './context/AuthContext'
@@ -82,6 +83,7 @@ export default function App() {
         <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
         <Route path="/register" element={<AuthRedirect><Signup /></AuthRedirect>} />
         <Route path="/signup" element={<SignupRedirect />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Layout><Home /></Layout>} />
         <Route path="/alerts" element={<Layout><Alerts /></Layout>} />
