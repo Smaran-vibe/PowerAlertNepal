@@ -25,7 +25,7 @@ function LockIcon() {
 
 export default function ForgotPassword() {
   const navigate = useNavigate()
-  const [step, setStep] = useState('email') // 'email' | 'otp' | 'password'
+  const [step, setStep] = useState('email')
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const [resetToken, setResetToken] = useState('')
