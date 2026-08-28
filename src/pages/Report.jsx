@@ -46,7 +46,7 @@ function writeDraft(payload) {
   try {
     sessionStorage.setItem(REPORT_DRAFT_KEY, JSON.stringify(payload))
   } catch {
-    
+
   }
 }
 
@@ -54,7 +54,7 @@ function clearDraft() {
   try {
     sessionStorage.removeItem(REPORT_DRAFT_KEY)
   } catch {
-  
+
   }
 }
 
@@ -107,10 +107,10 @@ export default function Report() {
       coords,
       image: imagePreviewUrl
         ? {
-            dataUrl: imagePreviewUrl,
-            name: imageMeta?.name || 'report-image',
-            type: imageMeta?.type || 'image/jpeg',
-          }
+          dataUrl: imagePreviewUrl,
+          name: imageMeta?.name || 'report-image',
+          type: imageMeta?.type || 'image/jpeg',
+        }
         : null,
     })
   }, [form, coords, imagePreviewUrl, imageMeta, hasHydratedDraft])
