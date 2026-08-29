@@ -71,8 +71,8 @@ export default function Signup() {
 
     try {
       await signup({ fullName: form.name, email: form.email, password: form.password })
-      toast.success('Account created! Please log in.')
-      navigate('/login', { replace: true, state: location.state })
+      toast.success('Account created! Check your email for a verification code.')
+      navigate('/verify-email', { replace: true, state: { email: form.email } })
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
