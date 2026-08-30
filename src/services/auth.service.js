@@ -18,6 +18,36 @@ export function googleLogin({ idToken }) {
         .then(response => response.data)
 }
 
+export function verifyEmail({ email, otp }) {
+    return api
+        .post('/api/auth/verify-email', { email, otp })
+        .then(response => response.data)
+}
+
+export function resendVerificationOtp({ email }) {
+    return api
+        .post('/api/auth/resend-verification-otp', { email })
+        .then(response => response.data)
+}
+
+export function forgotPassword({ email }) {
+    return api
+        .post('/api/auth/forgot-password', { email })
+        .then(response => response.data)
+}
+
+export function verifyResetOtp({ email, otp }) {
+    return api
+        .post('/api/auth/verify-reset-otp', { email, otp })
+        .then(response => response.data)
+}
+
+export function resetPassword({ resetToken, newPassword }) {
+    return api
+        .post('/api/auth/reset-password', { resetToken, newPassword })
+        .then(response => response.data)
+}
+
 export function refresh() {
     return api.post('/api/auth/refresh').then(response => response.data)
 }
