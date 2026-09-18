@@ -27,7 +27,7 @@ export default function GoogleLoginButton({ onError }) {
                 onError={() => onError?.('Google sign-in failed. Please try again.')}
                 theme="filled_black"
                 shape="pill"
-                width="100%"
+                width="320"
             />
         </div>
     )
