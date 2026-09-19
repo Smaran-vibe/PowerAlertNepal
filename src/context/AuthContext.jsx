@@ -69,11 +69,12 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let cancelled = false
-
     async function restoreSession() {
       try {
         const refreshResult = await authService.refresh()
         const token = refreshResult.data.accessToken
+
+        setApiAccessToken(token) // <-- set the token BEFORE the next authenticated call
 
         const meResult = await authService.getMe()
 
@@ -95,7 +96,6 @@ export function AuthProvider({ children }) {
         }
       }
     }
-
     restoreSession()
 
     function handleStorage(event) {
