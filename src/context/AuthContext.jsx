@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
         const refreshResult = await authService.refresh()
         const token = refreshResult.data.accessToken
 
-        setApiAccessToken(token) // <-- set the token BEFORE the next authenticated call
+        setApiAccessToken(token)
 
         const meResult = await authService.getMe()
 
@@ -96,6 +96,7 @@ export function AuthProvider({ children }) {
         }
       }
     }
+
     restoreSession()
 
     function handleStorage(event) {
