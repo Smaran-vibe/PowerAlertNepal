@@ -27,6 +27,18 @@ function Layout({ children }) {
   )
 }
 
+function AppShimmer() {
+  return (
+    <div className="min-h-screen bg-brand-lavender flex flex-col items-center justify-center gap-6 px-4">
+      <div className="w-full max-w-md flex flex-col gap-4">
+        <div className="shimmer h-8 w-1/2 rounded-md mx-auto" />
+        <div className="shimmer h-4 w-3/4 rounded-md mx-auto" />
+        <div className="shimmer h-40 w-full rounded-2xl mt-4" />
+      </div>
+    </div>
+  )
+}
+
 function AuthRedirect({ children }) {
   const { isAuthenticated, user } = useAuth()
   const location = useLocation()
@@ -69,9 +81,7 @@ export default function App() {
   if (isRestoring) {
     return (
       <ToastProvider>
-        <div className="flex min-h-screen items-center justify-center">
-          <p className="text-sm text-gray-500">Loading...</p>
-        </div>
+        <AppShimmer />
       </ToastProvider>
     )
   }
